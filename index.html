@@ -565,11 +565,6 @@
     function getSlotReactionKey(group, date, slotId) {
       return `${group}_${date}_${slotId}`;
     }
-
-    // 상태 관리
-    const now = new Date();
-    const curMonth = now.getMonth() + 1;
-    const curDay = now.getDate();
     
 // 상태 관리 (오전 9시 기준 하루 갱신)
     const now = new Date();
