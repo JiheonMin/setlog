@@ -488,26 +488,15 @@
     <!-- COMMENT INPUT MODAL SHEET                      -->
     <!-- ============================================== -->
     <div id="commentModal" class="absolute inset-0 bg-black/60 z-50 flex items-end justify-center hidden backdrop-blur-[2px] transition-opacity">
-      <div class="w-full bg-white rounded-t-3xl p-5 shadow-2xl space-y-4 animate-in slide-in-from-bottom duration-200">
+      <div class="w-full bg-white rounded-t-3xl p-5 shadow-2xl space-y-3 animate-in slide-in-from-bottom duration-200">
         <div class="flex items-center justify-between pb-1 border-b border-slate-100">
-          <div class="flex items-center space-x-2.5">
-            <div class="w-7 h-7 rounded-full overflow-hidden ring-1 ring-slate-200">
-              <img src="./m4.jpg" 
-                   onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&auto=format&fit=crop&q=80';" 
-                   alt="프로필" 
-                   class="w-full h-full object-cover">
-            </div>
-            <div>
-              <span class="text-xs font-bold text-slate-900">민지헌</span>
-              <p class="text-[10px] text-slate-400">댓글을 남기면 이 슬롯의 말풍선에 등록됩니다</p>
-            </div>
-          </div>
-          <button id="closeCommentModalBtn" class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-700">
+          <span class="text-xs font-bold text-slate-700">댓글 남기기</span>
+          <button id="closeCommentModalBtn" class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-700 active:scale-95 transition">
             ✕
           </button>
         </div>
 
-        <div class="space-y-2">
+        <div>
           <input type="text" 
                  id="commentInputText" 
                  placeholder="댓글 내용을 입력하세요..." 
@@ -515,7 +504,7 @@
                  class="w-full px-4 py-3 rounded-2xl bg-slate-100 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-setlog-mint font-medium">
         </div>
 
-        <div class="flex items-center justify-end space-x-2 pt-1">
+        <div class="pt-1">
           <button id="submitCommentBtn" class="w-full py-3 bg-setlog-mint hover:bg-setlog-mintDark active:scale-98 text-slate-900 font-bold text-xs rounded-2xl shadow-sm transition flex items-center justify-center gap-1.5">
             <span>등록하기</span>
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -536,8 +525,8 @@
   <script>
     const DEFAULT_PROFILE_IMG = './m4.jpg';
 
-// 여기에 복사한 URL을 넣으시면 즉시 연동됩니다.
-const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbybJFxTUOjHUvBuhx_cppWhrLqEWAIVM2z6u-u-Qjx5La-q_Lfjl5QnGzJiN9GiRvk9/exec";
+    // Google Sheets API Web App 배포 URL (스프레드시트 배포 후 여기에 붙여넣기)
+    const GOOGLE_SHEET_API_URL = ""; 
 
     // 지원 날짜 목록: 2026.09.14 ~ 2026.09.26 (총 13일)
     const DATE_LIST = [
@@ -570,28 +559,20 @@ const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbybJFxTUOj
       GROUP_FEED_DATABASE["채여니랑"][date] = createDateSlots("13:00", "17:00", "21:00");
     });
 
-    // --- 9.14 샘플 데이터 등록 (공개 상태 샘플) ---
+    // --- 9.14 기본 슬롯 등록 (샘플 댓글 완전 제거: 빈 배열로 통일) ---
     GROUP_FEED_DATABASE["재난관리국"]["2026.09.14"][0] = {
       id: "slot-0",
       time: "09:30",
       caption: "어제 먹다 남긴 믹스커피",
       image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=800&auto=format&fit=crop&q=80",
-      comments: [
-        "아 웃겨 ㅋㅋㅋㅋ 그래도 저거 먹을 만한가?",
-        "선배님 탕비실에 새 원두 들어왔습니다",
-        "식은 커피는 마시지 마라 배탈 난다"
-      ]
+      comments: []
     };
     GROUP_FEED_DATABASE["재난관리국"]["2026.09.14"][1] = {
       id: "slot-1",
       time: "12:00",
       caption: "구내식당 돈가스 정식. 소스는 왜 따로 줘?",
       image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&auto=format&fit=crop&q=80",
-      comments: [
-        "발사믹을 머 어쩌라는겨?",
-        "부먹 찍먹 논쟁 방지용 ㅋㅋㅋ",
-        "오늘 샐러드 싱싱하네요"
-      ]
+      comments: []
     };
 
     GROUP_FEED_DATABASE["제2 팀"]["2026.09.14"][0] = {
@@ -599,11 +580,7 @@ const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbybJFxTUOj
       time: "10:15",
       caption: "회의실 모니터 고장남. 팀장님 표정 굳음.",
       image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&auto=format&fit=crop&q=80",
-      comments: [
-        "이따 3층 회의실 쪽 쎄하니까 조심해라",
-        "케이블 다시 꽂아봤음?",
-        "팀장님 커피 한 잔 사드려..."
-      ]
+      comments: []
     };
 
     GROUP_FEED_DATABASE["채여니랑"]["2026.09.14"][0] = {
@@ -830,7 +807,7 @@ const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbybJFxTUOj
 
     function getSlotComment(slotObj) {
       if (!slotObj || !slotObj.comments || slotObj.comments.length === 0) {
-        return "오늘도 무사 퇴근 각 📿";
+        return "";
       }
       const pool = slotObj.comments;
       return pool[Math.floor(Math.random() * pool.length)];
@@ -866,24 +843,27 @@ const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbybJFxTUOj
               </div>
             `;
           } else {
-            // 일반 그룹 (재난관리국, 제2 팀): 개별 슬롯 회전 말풍선 + 리액션(4종) + 댓글 작성 버튼
+            // 일반 그룹 (재난관리국, 제2 팀): 댓글이 있을 때만 말풍선 표시
+            const hasComments = item.comments && item.comments.length > 0;
+            const currentComment = hasComments ? getSlotComment(item) : "";
+
             bottomContentHTML = `
               <div class="relative z-20 flex items-end justify-between gap-2 w-full">
                 <!-- Rotating Comment Speech Bubble -->
                 <div class="comment-bubble-container flex-1 min-w-0 pr-1">
-                  <div class="slot-comment-bubble comment-bubble-anim inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/95 text-slate-900 shadow-md backdrop-blur-md max-w-full">
+                  <div class="slot-comment-bubble comment-bubble-anim inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/95 text-slate-900 shadow-md backdrop-blur-md max-w-full ${hasComments ? '' : 'hidden'}">
                     <div class="w-4 h-4 rounded-full overflow-hidden shrink-0 ring-1 ring-slate-200">
                       <img src="./m4.jpg" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&auto=format&fit=crop&q=80';" class="w-full h-full object-cover">
                     </div>
                     <span class="slot-comment-text text-[11px] font-semibold truncate leading-tight" data-slot="${item.id}">
-                      ${getSlotComment(item)}
+                      ${currentComment}
                     </span>
                   </div>
                 </div>
 
                 <!-- Action Buttons: [표정 리액션] [말풍선(댓글작성)] -->
                 <div class="relative flex items-center space-x-1.5 shrink-0">
-                  <!-- Floating Reaction Picker Pill (원석/팔찌 제거, 표정 4종만 제공) -->
+                  <!-- Floating Reaction Picker Pill (표정 4종) -->
                   <div id="reactionPicker-${item.id}" class="reaction-picker-popover hidden absolute bottom-10 right-8 z-30 bg-slate-900/90 backdrop-blur-md text-white px-2 py-1.5 rounded-full shadow-xl flex items-center space-x-2.5 text-base reaction-popup-anim border border-white/20">
                     <button class="emoji-opt hover:scale-125 transition active:scale-95" data-emoji="😊" title="좋아요">😊</button>
                     <button class="emoji-opt hover:scale-125 transition active:scale-95" data-emoji="😢" title="슬퍼요">😢</button>
@@ -1068,15 +1048,18 @@ const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbybJFxTUOj
         commentBubbles.forEach(el => {
           const slotId = el.getAttribute('data-slot');
           const targetSlot = slots.find(s => s.id === slotId);
+          const parent = el.closest('.slot-comment-bubble');
           if (targetSlot && targetSlot.comments && targetSlot.comments.length > 0) {
             const newText = getSlotComment(targetSlot);
-            const parent = el.closest('.slot-comment-bubble');
             if (parent) {
+              parent.classList.remove('hidden');
               parent.classList.remove('comment-bubble-anim');
               void parent.offsetWidth;
               parent.classList.add('comment-bubble-anim');
             }
             el.innerText = newText;
+          } else {
+            if (parent) parent.classList.add('hidden');
           }
         });
       }, 5000);
@@ -1085,23 +1068,10 @@ const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbybJFxTUOj
     function openCommentModal() {
       if (!commentModal) return;
       commentModal.classList.remove('hidden');
-      if (commentAuthorText) commentAuthorText.value = '';
       if (commentInputText) {
         commentInputText.value = '';
         setTimeout(() => commentInputText.focus(), 100);
       }
-    }
-
-    if (anonToggleBtn) {
-      anonToggleBtn.addEventListener('click', () => {
-        if (!commentAuthorText) return;
-        if (commentAuthorText.value === '익명') {
-          commentAuthorText.value = '';
-          commentAuthorText.placeholder = "작성자 닉네임 (미입력 시 '익명')";
-        } else {
-          commentAuthorText.value = '익명';
-        }
-      });
     }
 
     function closeCommentModal() {
@@ -1119,11 +1089,9 @@ const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbybJFxTUOj
           return;
         }
 
-        // 작성자 닉네임 판별 (미입력 시 기본 '익명')
-        let author = (commentAuthorText && commentAuthorText.value.trim()) ? commentAuthorText.value.trim() : '익명';
-
-        // 화면 말풍선에 노출할 텍스트 형식 (닉네임 입력 시 "이름: 내용", 익명 선택 시 "내용" 또는 "익명: 내용")
-        const displayText = (author === '익명') ? text : `${author}: ${text}`;
+        // 무조건 '익명' 처리 (말풍선에는 작성자 표기 없이 깔끔하게 내용만 표시)
+        const author = '익명';
+        const displayText = text;
 
         const groupData = GROUP_FEED_DATABASE[activeGroupName] || {};
         const slots = groupData[selectedDate] || [];
@@ -1137,6 +1105,7 @@ const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbybJFxTUOj
           if (activeBubble) {
             const parent = activeBubble.closest('.slot-comment-bubble');
             if (parent) {
+              parent.classList.remove('hidden');
               parent.classList.remove('comment-bubble-anim');
               void parent.offsetWidth;
               parent.classList.add('comment-bubble-anim');
@@ -1145,7 +1114,7 @@ const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbybJFxTUOj
           }
         }
 
-        showToast(`${author}(으)로 댓글이 등록되었습니다!`);
+        showToast('익명으로 댓글이 등록되었습니다!');
         closeCommentModal();
 
         if (GOOGLE_SHEET_API_URL) {
