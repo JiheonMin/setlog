@@ -159,11 +159,11 @@
           </div>
         </div>
 
-        <!-- 3 Specific Groups -->
+        <!-- 2 Specific Groups (채여니랑 삭제 완료) -->
         <div class="space-y-3 pt-1">
           
           <!-- [그룹 1: 재난관리국] -->
-          <div class="group-card bg-white rounded-2xl p-4 flex items-center justify-between border border-slate-100 shadow-sm active:scale-[0.99] transition cursor-pointer hover:border-setlog-mint/50" data-group="재난관리국">
+          <div onclick="openGroupFeed('재난관리국')" class="group-card bg-white rounded-2xl p-4 flex items-center justify-between border border-slate-100 shadow-sm active:scale-[0.99] transition cursor-pointer hover:border-setlog-mint/50">
             <div class="flex items-center space-x-3.5">
               <div class="w-12 h-12 rounded-2xl bg-[#eff3f8] flex items-center justify-center text-slate-700 font-bold overflow-hidden border border-slate-200/60 relative">
                 <span class="text-xl">📿</span>
@@ -185,7 +185,7 @@
           </div>
 
           <!-- [그룹 2: 제2 팀] -->
-          <div class="group-card bg-white rounded-2xl p-4 flex items-center justify-between border border-slate-100 shadow-sm active:scale-[0.99] transition cursor-pointer hover:border-setlog-mint/50" data-group="제2 팀">
+          <div onclick="openGroupFeed('제2 팀')" class="group-card bg-white rounded-2xl p-4 flex items-center justify-between border border-slate-100 shadow-sm active:scale-[0.99] transition cursor-pointer hover:border-setlog-mint/50">
             <div class="flex items-center space-x-3.5">
               <div class="w-12 h-12 rounded-2xl bg-[#eff3f8] flex items-center justify-center text-slate-700 font-bold overflow-hidden border border-slate-200/60">
                 <span class="text-xl">🏢</span>
@@ -195,28 +195,6 @@
                   제2 팀
                 </h3>
                 <p class="text-xs text-slate-400 mt-0.5 font-medium">9.14 ~ 9.26 팀원 상호작용 기록</p>
-              </div>
-            </div>
-            <div class="flex items-center space-x-2 text-slate-400">
-              <span class="text-lg">•••</span>
-              <span class="text-base">☺</span>
-              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path>
-              </svg>
-            </div>
-          </div>
-
-          <!-- [그룹 3: 채여니랑] -->
-          <div class="group-card bg-white rounded-2xl p-4 flex items-center justify-between border border-slate-100 shadow-sm active:scale-[0.99] transition cursor-pointer hover:border-setlog-mint/50" data-group="채여니랑">
-            <div class="flex items-center space-x-3.5">
-              <div class="w-12 h-12 rounded-2xl bg-[#eff3f8] flex items-center justify-center text-slate-700 font-bold overflow-hidden border border-slate-200/60">
-                <span class="text-xl">🐱</span>
-              </div>
-              <div>
-                <h3 class="text-base font-bold text-slate-900 flex items-center gap-1.5">
-                  채여니랑
-                </h3>
-                <p class="text-xs text-slate-400 mt-0.5 font-medium">개인 스토리 & 아카이브 (상호작용 없음)</p>
               </div>
             </div>
             <div class="flex items-center space-x-2 text-slate-400">
@@ -549,14 +527,12 @@
     const GROUP_FEED_DATABASE = {
       "재난관리국": {},
       "제2 팀": {},
-      "채여니랑": {}
     };
 
     // 9.14 ~ 9.26 초기 슬롯 기본 생성 (기본은 노이즈 화면)
     DATE_LIST.forEach(date => {
       GROUP_FEED_DATABASE["재난관리국"][date] = createDateSlots("09:30", "12:00", "18:00");
       GROUP_FEED_DATABASE["제2 팀"][date] = createDateSlots("10:15", "14:00", "19:30");
-      GROUP_FEED_DATABASE["채여니랑"][date] = createDateSlots("13:00", "17:00", "21:00");
     });
 
     // --- 9.14 기본 슬롯 등록 (샘플 댓글 완전 제거: 빈 배열로 통일) ---
@@ -582,15 +558,7 @@
       image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&auto=format&fit=crop&q=80",
       comments: []
     };
-
-    GROUP_FEED_DATABASE["채여니랑"]["2026.09.14"][0] = {
-      id: "slot-0",
-      time: "13:00",
-      caption: "골목길 고양이 낮잠 타임",
-      image: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800&auto=format&fit=crop&q=80",
-      comments: [] // 채여니랑은 상호작용 완전 차단
-    };
-
+    
     // Vlog 데이터
     const VLOG_ENTRIES = [
       {
@@ -618,18 +586,25 @@
     }
 
     // State
-// 상태 관리 (안전한 인라인 날짜 자동 계산)
-let currentGroup = "재난관리국";
+// ==========================================
+    // 상태 관리 (누락 변수 선언 & 오늘 날짜 자동 감지)
+    // ==========================================
+    const now = new Date();
+    const curMonth = now.getMonth() + 1;
+    const curDay = now.getDate();
+    
+    // 오늘이 9월 14일 ~ 26일 사이라면 해당 날짜로 자동 세팅
+    const defaultDate = (curMonth === 9 && curDay >= 14 && curDay <= 26)
+      ? `2026.09.${curDay < 10 ? '0' + curDay : curDay}`
+      : "2026.09.14";
 
-const now = new Date();
-const curMonth = now.getMonth() + 1;
-const curDay = now.getDate();
-let currentDate = (curMonth === 9 && curDay >= 14 && curDay <= 26)
-  ? `2026.09.${curDay < 10 ? '0' + curDay : curDay}`
-  : "2026.09.14";
-
-let activeSlotIndex = null;
-let commentRotatorInterval = null;
+    let activeGroupName = "재난관리국";
+    let selectedDate = defaultDate;
+    let currentTab = "log";
+    let currentVlogIndex = 0;
+    let activeCommentSlotId = null;
+    let commentRotationInterval = null;
+    const slotCommentIndices = {};
 
     // DOM Elements
     const logView = document.getElementById('logView');
@@ -1041,45 +1016,38 @@ let commentRotatorInterval = null;
       });
     }
 
-    // 5-second interval rotating comment bubble per slot
-// 각 슬롯의 현재 순번을 기억하는 저장소
-const slotCommentIndices = {};
-
-function startCommentRotation() {
-  // 이전 타이머가 돌고 있다면 깨끗하게 제거
-  if (commentRotatorInterval) {
-    clearInterval(commentRotatorInterval);
-    commentRotatorInterval = null;
-  }
-
-  commentRotatorInterval = setInterval(() => {
-    for (let i = 0; i < 3; i++) {
-      const slotKey = getStorageKey(currentGroup, currentDate, i);
-      const comments = MEMORY_DB.comments[slotKey] || [];
-      const bubble = document.getElementById(`bubble-${slotKey}`);
-
-      // 댓글이 2개 이상일 때 순환 작동
-      if (bubble && comments.length > 1) {
-        // 처음이면 0번으로 초기화
-        if (slotCommentIndices[slotKey] === undefined) {
-          slotCommentIndices[slotKey] = 0;
-        }
-
-        // 인덱스를 1 증가시키고, 끝에 도달하면 무조건 0으로 되돌림 (무한 루프)
-        slotCommentIndices[slotKey]++;
-        if (slotCommentIndices[slotKey] >= comments.length) {
-          slotCommentIndices[slotKey] = 0;
-        }
-
-        const nextComment = comments[slotCommentIndices[slotKey]];
-        const span = bubble.querySelector(".bubble-text");
-        if (span) {
-          span.textContent = nextComment;
-        }
+   // 각 슬롯별 댓글 순차 무한 순환
+    function startCommentRotation() {
+      if (commentRotationInterval) {
+        clearInterval(commentRotationInterval);
+        commentRotationInterval = null;
       }
+
+      commentRotationInterval = setInterval(() => {
+        const groupData = GROUP_FEED_DATABASE[activeGroupName] || {};
+        const slots = groupData[selectedDate] || [];
+
+        slots.forEach((slot) => {
+          if (slot.comments && slot.comments.length > 1) {
+            const rotKey = `${activeGroupName}_${selectedDate}_${slot.id}`;
+            if (slotCommentIndices[rotKey] === undefined) {
+              slotCommentIndices[rotKey] = 0;
+            }
+
+            slotCommentIndices[rotKey]++;
+            if (slotCommentIndices[rotKey] >= slot.comments.length) {
+              slotCommentIndices[rotKey] = 0;
+            }
+
+            const nextComment = slot.comments[slotCommentIndices[rotKey]];
+            const textSpan = document.querySelector(`.slot-comment-text[data-slot="${slot.id}"]`);
+            if (textSpan) {
+              textSpan.innerText = nextComment;
+            }
+          }
+        });
+      }, 3000); // 3초마다 순환 (원하는 초로 숫자 변경 가능)
     }
-  }, 3000); // 5초 주기
-}
 
     function openCommentModal() {
       if (!commentModal) return;
