@@ -989,25 +989,53 @@
           picker.classList.add('hidden');
           showToast(`반응을 남겼습니다: ${selectedEmoji}`);
 
-if (GOOGLE_SHEET_API_URL) {
-          try {
-            await fetch(GOOGLE_SHEET_API_URL, {
-              method: 'POST',
-              mode: 'no-cors',
-              body: JSON.stringify({
-                action: "comment",
-                group: activeGroupName,
-                date: selectedDate,
-                slot: activeCommentSlotId,
-                author: author,
-                content: text,
-                timestamp: new Date().toISOString()
-              })
-            });
-          } catch (err) {
-            console.error('Google Sheet comment failed:', err);
+// 3. Emoji selection inside picker (정상 복구된 버전)
+      document.querySelectorAll('.emoji-opt').forEach(emojiBtn => {
+        emojiBtn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const selectedEmoji = emojiBtn.getAttribute('data-emoji');
+          const picker = emojiBtn.closest('.reaction-picker-popover');
+          const slotId = picker.id.replace('reactionPicker-', '');
+
+          const reactionKey = getSlotReactionKey(activeGroupName, selectedDate, slotId);
+          if (!slotReactionsState[reactionKey]) {
+            slotReactionsState[reactionKey] = { selected: selectedEmoji, count: 1 };
+          } else {
+            slotReactionsState[reactionKey].selected = selectedEmoji;
+            slotReactionsState[reactionKey].count += 1;
           }
-        }
+
+          const triggerBtn = document.querySelector(`.reaction-trigger-btn[data-slot="${slotId}"]`);
+          if (triggerBtn) {
+            const iconSpan = triggerBtn.querySelector('.reaction-icon');
+            const countSpan = triggerBtn.querySelector('.reaction-count');
+            if (iconSpan) iconSpan.innerText = selectedEmoji;
+            if (countSpan) countSpan.innerText = slotReactionsState[reactionKey].count;
+          }
+
+          picker.classList.add('hidden');
+          showToast(`반응을 남겼습니다: ${selectedEmoji}`);
+
+          // 구글 시트로 이모지 리액션 전송
+          if (GOOGLE_SHEET_API_URL) {
+            try {
+              await fetch(GOOGLE_SHEET_API_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify({
+                  action: "reaction",
+                  content: selectedEmoji,
+                  group: activeGroupName,
+                  date: selectedDate,
+                  slot: slotId,
+                  author: "익명",
+                  timestamp: new Date().toISOString()
+                })
+              });
+            } catch (err) {
+              console.debug('Reaction offline logged');
+            }
+          }
         });
       });
 
