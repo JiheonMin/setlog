@@ -698,9 +698,10 @@
               }
             }
           });
-          // 현재 뷰 갱신
+// 현재 뷰 갱신 및 댓글 순환 재시작
           if (!groupFeedView.classList.contains('hidden')) {
             renderGroupFeed();
+            startCommentRotation();
           }
         }
       } catch (err) {
@@ -988,26 +989,25 @@
           picker.classList.add('hidden');
           showToast(`반응을 남겼습니다: ${selectedEmoji}`);
 
-          if (GOOGLE_SHEET_API_URL) {
-            try {
-              await fetch(GOOGLE_SHEET_API_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  action: "reaction",
-                  content: selectedEmoji,
-                  group: activeGroupName,
-                  date: selectedDate,
-                  slot: slotId,
-                  author: "민지헌",
-                  timestamp: new Date().toISOString()
-                })
-              });
-            } catch (err) {
-              console.debug('Reaction offline logged');
-            }
+if (GOOGLE_SHEET_API_URL) {
+          try {
+            await fetch(GOOGLE_SHEET_API_URL, {
+              method: 'POST',
+              mode: 'no-cors',
+              body: JSON.stringify({
+                action: "comment",
+                group: activeGroupName,
+                date: selectedDate,
+                slot: activeCommentSlotId,
+                author: author,
+                content: text,
+                timestamp: new Date().toISOString()
+              })
+            });
+          } catch (err) {
+            console.error('Google Sheet comment failed:', err);
           }
+        }
         });
       });
 
