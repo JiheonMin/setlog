@@ -984,9 +984,13 @@ if (submitCommentBtn) {
           return;
         }
 
-        // 🔒 관리자 비밀번호 검증
-        const enteredPw = prompt("셋로그 개설한 건 비밀이야");
-        if (enteredPw !== "950111") {
+// 🔒 관리자 비밀번호 검증
+        const enteredPw = prompt("셋로그 개설한 건 비밀이야") || "";
+        const saltedPw = enteredPw + "_mjh_2026!";
+        const hashBuf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(saltedPw));
+        const hashHex = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
+
+        if (hashHex !== "37b3ba6c7aa42d4cfab9273c52431cb2c9bf80db42337a6ce5358aa0fa6fce7c") {
           showToast("공무원은 품위 유지 의무 있다구 셋로그 하지 말래~");
           return;
         }
