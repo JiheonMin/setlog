@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>MJH SETLOG</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Jua / Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jua&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            setlog: {
+              mint: '#3ee0b7',
+              mintDark: '#29c69f',
+              bg: '#f8f9fa',
+              card: '#ffffff',
+              cardSub: '#f0f2f5',
+              textMain: '#1e2329',
+              textSub: '#8a94a4'
+            }
+          },
+          fontFamily: {
+            logo: ['Jua', 'sans-serif'],
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      box-sizing: border-box;
+    }
+    body {
+      background-color: #e5e9f0;
+    }
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .setlog-logo-text {
+      font-family: 'Jua', sans-serif;
+      letter-spacing: -0.02em;
+    }
+    .slide-card-enter {
+      animation: fadeIn 0.2s ease-out forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0.6; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .noise-bg {
+      background: radial-gradient(circle at 50% 50%, #d8dde3 0%, #c4cbd4 100%);
+    }
+    .comment-bubble-anim {
+      animation: bubblePop 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes bubblePop {
+      0% { opacity: 0; transform: translateY(6px) scale(0.95); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .reaction-popup-anim {
+      animation: popUp 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    @keyframes popUp {
+      from { opacity: 0; transform: translateY(8px) scale(0.9); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center sm:py-6 font-sans text-setlog-textMain">
+
+  <!-- Mobile Device Outer Frame Container -->
+  <div class="relative w-full max-w-[420px] h-[100dvh] sm:h-[844px] bg-[#f8f9fa] sm:rounded-[48px] sm:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.2)] border sm:border-slate-300/80 flex flex-col overflow-hidden">
+
+    <!-- Top Status Bar Mockup -->
+    <header class="w-full pt-3 px-7 pb-2 flex items-center justify-between z-30 shrink-0 select-none">
+      <span id="statusBarTime" class="text-[13px] font-bold tracking-tight text-slate-800">4:39</span>
+      
+      <!-- Dynamic Island Pill -->
+      <div class="w-24 h-5 bg-black rounded-full flex items-center justify-end px-2 space-x-1">
+        <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+      </div>
+
+      <!-- LTE & Green 94% Battery -->
+      <div class="flex items-center space-x-1.5 text-xs text-slate-800 font-semibold">
+        <span class="text-[10px] font-bold text-slate-600">LTE</span>
+        <div class="flex items-center gap-0.5 px-1.5 py-0.5 bg-emerald-500 text-white text-[10px] font-extrabold rounded-md shadow-sm">
+          <span>94</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main View Header (MJH Logo + Profile Avatar) -->
+    <section id="mainAppHeader" class="px-6 pt-2 pb-3 shrink-0 flex items-center justify-between">
+      <div class="flex flex-col">
+        <h1 class="text-3xl text-setlog-mint setlog-logo-text font-black tracking-tight leading-none drop-shadow-sm">
+          MJH
+        </h1>
+        <div class="flex items-center gap-1.5 mt-1.5 text-xs text-slate-400 font-medium">
+          <span class="w-4 h-4 rounded-full bg-blue-500 text-white flex items-center justify-center text-[9px]">
+            ☺
+          </span>
+          <span class="text-[13px] text-slate-500 font-medium">가로로 돌려 촬영</span>
+        </div>
+      </div>
+
+      <!-- Static Profile Avatar (Visitor upload disabled) -->
+      <div class="relative select-none" id="profileAvatarContainer">
+        <div class="w-11 h-11 rounded-full p-0.5 bg-slate-100 ring-2 ring-slate-200 overflow-hidden flex items-center justify-center shadow-sm">
+          <img id="profileImage" 
+               src="./m4.jpg" 
+               onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&auto=format&fit=crop&q=80';" 
+               alt="민지헌 프로필" 
+               class="w-full h-full object-cover rounded-full">
+        </div>
+      </div>
+    </section>
+
+    <!-- Views Container -->
+    <div class="relative flex-1 w-full overflow-hidden flex flex-col">
+
+      <!-- ============================================== -->
+      <!-- VIEW 1: MAIN LOG VIEW (Banner & 3 Custom Groups) -->
+      <!-- ============================================== -->
+      <div id="logView" class="w-full h-full flex flex-col px-5 overflow-y-auto hide-scrollbar space-y-4 pb-24 transition-opacity duration-200">
+        
+        <!-- Vlog Banner Card -->
+        <div id="vlogBannerCard" class="w-full bg-[#f0f2f5] rounded-3xl p-5 flex items-center justify-between relative shadow-sm border border-slate-200/60 cursor-pointer active:scale-[0.99] transition hover:border-setlog-mint/50">
+          <div class="flex flex-col space-y-1">
+            <span class="text-xl font-bold tracking-tight text-slate-900">vlog</span>
+            <p class="text-xs text-slate-500 font-medium leading-relaxed">
+              나만의 공간, 매일 오전 4시에 하루 시작
+            </p>
+          </div>
+          <!-- Cute Star Icon -->
+          <div class="relative shrink-0 w-16 h-16 flex items-center justify-center">
+            <svg class="w-16 h-16 text-yellow-300 drop-shadow-sm" viewBox="0 0 100 100" fill="currentColor">
+              <polygon points="50,5 64,36 98,39 72,63 79,96 50,78 21,96 28,63 2,39 36,36" 
+                       stroke="#1e2329" stroke-width="5" stroke-linejoin="round" fill="#fff176"/>
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center font-bold text-slate-900 pointer-events-none -mt-1">
+              <span class="text-xs tracking-widest font-mono">••</span>
+              <span class="text-[10px] -mt-1 font-bold">o</span>
+            </div>
+            <div class="absolute -top-1 right-1 text-slate-800 font-bold text-xs">/</div>
+            <div class="absolute -bottom-1 left-1 text-slate-800 font-bold text-xs">\</div>
+          </div>
+        </div>
+
+        <!-- 3 Specific Groups -->
+        <div class="space-y-3 pt-1">
+          
+          <!-- [그룹 1: 재난관리국] -->
+          <div class="group-card bg-white rounded-2xl p-4 flex items-center justify-between border border-slate-100 shadow-sm active:scale-[0.99] transition cursor-pointer hover:border-setlog-mint/50" data-group="재난관리국">
+            <div class="flex items-center space-x-3.5">
+              <div class="w-12 h-12 rounded-2xl bg-[#eff3f8] flex items-center justify-center text-slate-700 font-bold overflow-hidden border border-slate-200/60 relative">
+                <span class="text-xl">📿</span>
+              </div>
+              <div>
+                <h3 class="text-base font-bold text-slate-900 flex items-center gap-1.5">
+                  재난관리국
+                </h3>
+                <p class="text-xs text-slate-400 mt-0.5 font-medium">9.14 ~ 9.26 현장대응팀 로그</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2 text-slate-400">
+              <span class="text-lg">•••</span>
+              <span class="text-base">☺</span>
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </div>
+          </div>
+
+          <!-- [그룹 2: 제2 팀] -->
+          <div class="group-card bg-white rounded-2xl p-4 flex items-center justify-between border border-slate-100 shadow-sm active:scale-[0.99] transition cursor-pointer hover:border-setlog-mint/50" data-group="제2 팀">
+            <div class="flex items-center space-x-3.5">
+              <div class="w-12 h-12 rounded-2xl bg-[#eff3f8] flex items-center justify-center text-slate-700 font-bold overflow-hidden border border-slate-200/60">
+                <span class="text-xl">🏢</span>
+              </div>
+              <div>
+                <h3 class="text-base font-bold text-slate-900 flex items-center gap-1.5">
+                  제2 팀
+                </h3>
+                <p class="text-xs text-slate-400 mt-0.5 font-medium">9.14 ~ 9.26 팀원 상호작용 기록</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2 text-slate-400">
+              <span class="text-lg">•••</span>
+              <span class="text-base">☺</span>
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </div>
+          </div>
+
+          <!-- [그룹 3: 채여니랑] -->
+          <div class="group-card bg-white rounded-2xl p-4 flex items-center justify-between border border-slate-100 shadow-sm active:scale-[0.99] transition cursor-pointer hover:border-setlog-mint/50" data-group="채여니랑">
+            <div class="flex items-center space-x-3.5">
+              <div class="w-12 h-12 rounded-2xl bg-[#eff3f8] flex items-center justify-center text-slate-700 font-bold overflow-hidden border border-slate-200/60">
+                <span class="text-xl">🐱</span>
+              </div>
+              <div>
+                <h3 class="text-base font-bold text-slate-900 flex items-center gap-1.5">
+                  채여니랑
+                </h3>
+                <p class="text-xs text-slate-400 mt-0.5 font-medium">개인 스토리 & 아카이브 (상호작용 없음)</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2 text-slate-400">
+              <span class="text-lg">•••</span>
+              <span class="text-base">☺</span>
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ============================================== -->
+      <!-- VIEW 4: GROUP LOG VIEW (With Date Selector & 3 Slots) -->
+      <!-- ============================================== -->
+      <div id="groupFeedView" class="w-full h-full hidden flex flex-col px-4 pb-4 overflow-hidden">
+        
+        <!-- Group View Top Navigation Bar -->
+        <div class="flex items-center justify-between pt-1 pb-2 shrink-0">
+          <button id="groupBackBtn" class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 active:scale-95 transition" title="뒤로가기">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path>
+            </svg>
+          </button>
+
+          <!-- Calendar Button (Opens Date Picker Modal) -->
+          <button id="groupCalendarBtn" class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 active:scale-95 transition" title="날짜 선택">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+          </button>
+
+          <!-- Group Title & Current Date Header Pill -->
+          <div class="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-slate-100 text-xs font-bold text-slate-800">
+            <span id="groupTitleText">재난관리국</span>
+            <span class="text-slate-400 text-[11px] font-normal">|</span>
+            <span id="currentDateBadge" class="text-setlog-mintDark font-mono font-bold">09.14</span>
+          </div>
+
+          <div class="w-9 h-9"></div> <!-- Spacer for perfect center alignment -->
+        </div>
+
+        <!-- Dot Pagination Indicator -->
+        <div class="flex items-center justify-center space-x-1.5 py-1 shrink-0">
+          <div class="w-1.5 h-1.5 rounded-full bg-slate-800"></div>
+          <div class="w-1.5 h-1.5 rounded-full bg-slate-300"></div>
+          <div class="w-1.5 h-1.5 rounded-full bg-slate-300"></div>
+          <div class="w-1.5 h-1.5 rounded-full bg-slate-300"></div>
+          <div class="w-1.5 h-1.5 rounded-full bg-slate-300"></div>
+          <div class="w-1.5 h-1.5 rounded-full bg-slate-300"></div>
+        </div>
+
+        <!-- 3-Slot Vertical Feed Container -->
+        <div id="groupSlotsContainer" class="flex-1 overflow-y-auto hide-scrollbar flex flex-col space-y-3 pt-1 pb-6">
+          <!-- Dynamically populated via renderGroupFeed() -->
+        </div>
+
+      </div>
+
+      <!-- ============================================== -->
+      <!-- VIEW 2: VLOG DETAIL VIEW (Matches IMG_0338.jpg) -->
+      <!-- ============================================== -->
+      <div id="vlogDetailView" class="w-full h-full hidden flex flex-col px-5 pb-6 overflow-hidden">
+        
+        <div class="flex items-center justify-between pt-1 pb-4 shrink-0">
+          <button id="vlogBackBtn" class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 active:scale-95 transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path>
+            </svg>
+          </button>
+
+          <div class="px-4 py-1.5 rounded-full bg-slate-100 flex items-center gap-1 text-xs font-bold text-slate-800">
+            <span>vlog</span>
+          </div>
+
+          <div class="w-9 h-9"></div>
+        </div>
+
+        <div class="flex-1 flex flex-col justify-center items-center relative select-none">
+          <div id="vlogSwipeCard" class="w-full max-w-[340px] aspect-[4/3] bg-zinc-200 rounded-3xl overflow-hidden relative shadow-md border border-slate-200/80 flex flex-col justify-between p-4 cursor-grab active:cursor-grabbing">
+            
+            <img id="vlogCardImage" 
+                 src="https://images.unsplash.com/photo-1517849845537-4d257902454a?w=800&auto=format&fit=crop&q=80" 
+                 alt="Vlog Photo" 
+                 class="absolute inset-0 w-full h-full object-cover z-0">
+            
+            <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60 z-0 pointer-events-none"></div>
+
+            <div class="relative z-10 flex items-center space-x-2">
+              <div class="w-7 h-7 rounded-full bg-white ring-2 ring-white/70 overflow-hidden flex items-center justify-center shadow">
+                <img id="vlogCardProfile" 
+                     src="./m4.jpg" 
+                     onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&auto=format&fit=crop&q=80';" 
+                     alt="민지헌" 
+                     class="w-full h-full object-cover">
+              </div>
+              <span class="text-xs font-bold text-white drop-shadow">민지헌</span>
+            </div>
+
+            <div class="relative z-10 flex flex-col space-y-1">
+              <p id="vlogCardNote" class="text-xs font-medium text-white/90 drop-shadow line-clamp-2 leading-relaxed">
+              </p>
+              
+              <div class="flex items-center justify-between pt-1">
+                <span id="vlogPageCounter" class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-black/40 text-white/80 backdrop-blur-sm">
+                  1 / 3
+                </span>
+                
+                <div id="vlogCardDate" class="text-xs font-semibold px-2.5 py-1 rounded-full bg-black/50 text-white backdrop-blur-md drop-shadow">
+                  2026.09.14
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="flex items-center justify-center space-x-6 mt-4 z-20">
+            <button id="prevVlogBtn" class="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-700 active:scale-90 transition border border-slate-200">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path>
+              </svg>
+            </button>
+            <span class="text-xs text-slate-400 font-medium select-none">좌우로 넘겨 이전 기록 보기</span>
+            <button id="nextVlogBtn" class="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-700 active:scale-90 transition border border-slate-200">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ============================================== -->
+      <!-- VIEW 3: CAMERA VIEW (Static Viewfinder Interface) -->
+      <!-- ============================================== -->
+      <div id="cameraView" class="w-full h-full hidden flex flex-col relative bg-black select-none">
+        
+        <div class="relative w-full flex-1 overflow-hidden bg-zinc-950 flex items-center justify-center">
+          <img id="viewfinderPhoto" 
+               src="https://images.unsplash.com/photo-1517849845537-4d257902454a?w=800&auto=format&fit=crop&q=80" 
+               alt="카메라 화면" 
+               class="w-full h-full object-cover opacity-90 transition duration-300">
+          
+          <!-- Viewfinder Grid -->
+          <div class="absolute inset-0 grid grid-cols-3 grid-rows-3 pointer-events-none border border-white/10">
+            <div class="border-r border-b border-white/15"></div>
+            <div class="border-r border-b border-white/15"></div>
+            <div class="border-b border-white/15"></div>
+            <div class="border-r border-b border-white/15"></div>
+            <div class="border-r border-b border-white/15"></div>
+            <div class="border-b border-white/15"></div>
+            <div class="border-r border-b border-white/15"></div>
+            <div class="border-r border-b border-white/15"></div>
+            <div></div>
+          </div>
+
+          <!-- Focus Bracket -->
+          <div class="absolute w-20 h-20 border-2 border-yellow-400/80 rounded-lg pointer-events-none flex items-center justify-center animate-pulse">
+            <div class="w-2 h-0.5 bg-yellow-400"></div>
+          </div>
+
+          <!-- HUD Header (Photo change upload disabled) -->
+          <div class="absolute top-4 inset-x-4 flex items-center justify-between text-white/90 text-xs font-mono drop-shadow">
+            <span class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-md">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+              LIVE
+            </span>
+            <span class="px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-md text-white text-[11px]">
+              NDMC CAMERA
+            </span>
+          </div>
+
+          <!-- Camera Note -->
+          <div class="absolute bottom-4 inset-x-4 p-3 rounded-2xl bg-black/60 backdrop-blur-md border border-white/10 text-white flex items-center justify-between">
+            <div class="flex items-center space-x-2.5">
+              <span class="text-xl">📿</span>
+              <div>
+                <p class="text-xs font-bold">원석 팔찌 반응 정상</p>
+                <p class="text-[11px] text-zinc-300">내 눈엔 안 보임. 오늘도 무사 퇴근 각.</p>
+              </div>
+            </div>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/20 text-white">1x</span>
+          </div>
+        </div>
+
+        <!-- Shutter Button Area -->
+        <div class="h-28 w-full bg-black flex items-center justify-around px-8 shrink-0 pb-6">
+          <div class="w-10 h-10 rounded-xl bg-zinc-800 border border-zinc-700 overflow-hidden flex items-center justify-center text-xs text-white/60">
+            갤러리
+          </div>
+          <button id="shutterBtn" class="w-18 h-18 rounded-full border-4 border-white flex items-center justify-center p-1 active:scale-95 transition">
+            <div class="w-14 h-14 rounded-full bg-white hover:bg-slate-200 transition"></div>
+          </button>
+          <div class="w-10 h-10 rounded-full flex items-center justify-center text-white/70 text-lg">
+            ⚡
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Bottom Setlog Navigation Bar -->
+    <nav id="bottomNavBar" class="absolute bottom-4 inset-x-6 z-40 flex items-center justify-between select-none">
+      
+      <!-- Bell Button -->
+      <button class="w-12 h-12 rounded-full bg-white shadow-[0_4px_16px_rgba(0,0,0,0.08)] flex items-center justify-center text-slate-800 hover:bg-slate-50 active:scale-95 transition border border-slate-100">
+        <svg class="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+        </svg>
+      </button>
+
+      <!-- Center Segmented Pill: [카메라 | 로그] -->
+      <div class="flex items-center p-1 bg-[#e9ecf0] rounded-full shadow-inner">
+        <button id="navCameraBtn" class="px-5 py-2.5 rounded-full text-xs font-bold text-slate-500 hover:text-slate-800 transition">
+          카메라
+        </button>
+        <button id="navLogBtn" class="px-5 py-2.5 rounded-full text-xs font-bold bg-white text-slate-900 shadow-md transition">
+          로그
+        </button>
+      </div>
+
+      <!-- Plus Button -->
+      <button class="w-12 h-12 rounded-full bg-white shadow-[0_4px_16px_rgba(0,0,0,0.08)] flex items-center justify-center text-slate-800 hover:bg-slate-50 active:scale-95 transition border border-slate-100">
+        <svg class="w-5 h-5 text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
+        </svg>
+      </button>
+
+    </nav>
+
+    <!-- Bottom Indicator bar for iPhone -->
+    <div class="w-full flex justify-center pb-1.5 pt-0.5 bg-transparent shrink-0">
+      <div class="w-32 h-1 bg-slate-900/40 rounded-full"></div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- CALENDAR DATE PICKER MODAL (9/14 ~ 9/26)       -->
+    <!-- ============================================== -->
+    <div id="calendarModal" class="absolute inset-0 bg-black/60 z-50 flex items-end justify-center hidden backdrop-blur-[2px] transition-opacity">
+      <div class="w-full bg-white rounded-t-3xl p-5 shadow-2xl space-y-4 animate-in slide-in-from-bottom duration-200 max-h-[80%] flex flex-col">
+        <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+          <div class="flex items-center space-x-2">
+            <span class="text-base">📅</span>
+            <h3 class="text-sm font-bold text-slate-900">날짜 선택 (9.14 ~ 9.26)</h3>
+          </div>
+          <button id="closeCalendarModalBtn" class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-700">
+            ✕
+          </button>
+        </div>
+
+        <p class="text-[11px] text-slate-500">
+          원하는 날짜를 선택하면 해당 일자의 3칸 로그로 전환됩니다.
+        </p>
+
+        <!-- Dates Grid List -->
+        <div id="calendarDatesGrid" class="grid grid-cols-3 gap-2 overflow-y-auto hide-scrollbar py-1">
+          <!-- Populated dynamically via renderCalendarDates() -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- COMMENT INPUT MODAL SHEET                      -->
+    <!-- ============================================== -->
+    <div id="commentModal" class="absolute inset-0 bg-black/60 z-50 flex items-end justify-center hidden backdrop-blur-[2px] transition-opacity">
+      <div class="w-full bg-white rounded-t-3xl p-5 shadow-2xl space-y-4 animate-in slide-in-from-bottom duration-200">
+        <div class="flex items-center justify-between pb-1 border-b border-slate-100">
+          <div class="flex items-center space-x-2.5">
+            <div class="w-7 h-7 rounded-full overflow-hidden ring-1 ring-slate-200">
+              <img src="./m4.jpg" 
+                   onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&auto=format&fit=crop&q=80';" 
+                   alt="프로필" 
+                   class="w-full h-full object-cover">
+            </div>
+            <div>
+              <span class="text-xs font-bold text-slate-900">민지헌</span>
+              <p class="text-[10px] text-slate-400">댓글을 남기면 이 슬롯의 말풍선에 등록됩니다</p>
+            </div>
+          </div>
+          <button id="closeCommentModalBtn" class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-700">
+            ✕
+          </button>
+        </div>
+
+        <div class="space-y-2">
+          <input type="text" 
+                 id="commentInputText" 
+                 placeholder="댓글 내용을 입력하세요..." 
+                 maxlength="60"
+                 class="w-full px-4 py-3 rounded-2xl bg-slate-100 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-setlog-mint font-medium">
+        </div>
+
+        <div class="flex items-center justify-end space-x-2 pt-1">
+          <button id="submitCommentBtn" class="w-full py-3 bg-setlog-mint hover:bg-setlog-mintDark active:scale-98 text-slate-900 font-bold text-xs rounded-2xl shadow-sm transition flex items-center justify-center gap-1.5">
+            <span>등록하기</span>
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification Overlay -->
+    <div id="toastBox" class="fixed top-12 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-slate-900/90 text-white text-xs font-medium backdrop-blur-md opacity-0 pointer-events-none transition duration-300 z-50 shadow-lg">
+      메시지
+    </div>
+
+  </div>
+
+  <script>
+    const DEFAULT_PROFILE_IMG = './m4.jpg';
+
+    // Google Sheets API Web App 배포 URL (스프레드시트 배포 후 여기에 붙여넣기)
+    const GOOGLE_SHEET_API_URL = ""; 
+
+    // 지원 날짜 목록: 2026.09.14 ~ 2026.09.26 (총 13일)
+    const DATE_LIST = [
+      "2026.09.14", "2026.09.15", "2026.09.16", "2026.09.17",
+      "2026.09.18", "2026.09.19", "2026.09.20", "2026.09.21",
+      "2026.09.22", "2026.09.23", "2026.09.24", "2026.09.25", "2026.09.26"
+    ];
+
+    // 날짜별 3슬롯 기본 데이터베이스 템플릿 생성기
+    function createDateSlots(defaultTime1, defaultTime2, defaultTime3) {
+      return [
+        { id: "slot-0", time: defaultTime1, caption: null, image: null, comments: [] },
+        { id: "slot-1", time: defaultTime2, caption: null, image: null, comments: [] },
+        { id: "slot-2", time: defaultTime3, caption: null, image: null, comments: [] }
+      ];
+    }
+
+    // 그룹별 날짜 데이터베이스
+    // (💡 깃허브에서 사진을 공개할 때 해당 날짜의 image와 caption을 채워 넣으시면 됩니다)
+    const GROUP_FEED_DATABASE = {
+      "재난관리국": {},
+      "제2 팀": {},
+      "채여니랑": {}
+    };
+
+    // 9.14 ~ 9.26 초기 슬롯 기본 생성 (기본은 노이즈 화면)
+    DATE_LIST.forEach(date => {
+      GROUP_FEED_DATABASE["재난관리국"][date] = createDateSlots("09:30", "12:00", "18:00");
+      GROUP_FEED_DATABASE["제2 팀"][date] = createDateSlots("10:15", "14:00", "19:30");
+      GROUP_FEED_DATABASE["채여니랑"][date] = createDateSlots("13:00", "17:00", "21:00");
+    });
+
+    // --- 9.14 샘플 데이터 등록 (공개 상태 샘플) ---
+    GROUP_FEED_DATABASE["재난관리국"]["2026.09.14"][0] = {
+      id: "slot-0",
+      time: "09:30",
+      caption: "어제 먹다 남긴 믹스커피",
+      image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=800&auto=format&fit=crop&q=80",
+      comments: [
+        "아 웃겨 ㅋㅋㅋㅋ 그래도 저거 먹을 만한가?",
+        "선배님 탕비실에 새 원두 들어왔습니다",
+        "식은 커피는 마시지 마라 배탈 난다"
+      ]
+    };
+    GROUP_FEED_DATABASE["재난관리국"]["2026.09.14"][1] = {
+      id: "slot-1",
+      time: "12:00",
+      caption: "구내식당 돈가스 정식. 소스는 왜 따로 줘?",
+      image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&auto=format&fit=crop&q=80",
+      comments: [
+        "발사믹을 머 어쩌라는겨?",
+        "부먹 찍먹 논쟁 방지용 ㅋㅋㅋ",
+        "오늘 샐러드 싱싱하네요"
+      ]
+    };
+
+    GROUP_FEED_DATABASE["제2 팀"]["2026.09.14"][0] = {
+      id: "slot-0",
+      time: "10:15",
+      caption: "회의실 모니터 고장남. 팀장님 표정 굳음.",
+      image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&auto=format&fit=crop&q=80",
+      comments: [
+        "이따 3층 회의실 쪽 쎄하니까 조심해라",
+        "케이블 다시 꽂아봤음?",
+        "팀장님 커피 한 잔 사드려..."
+      ]
+    };
+
+    GROUP_FEED_DATABASE["채여니랑"]["2026.09.14"][0] = {
+      id: "slot-0",
+      time: "13:00",
+      caption: "골목길 고양이 낮잠 타임",
+      image: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800&auto=format&fit=crop&q=80",
+      comments: [] // 채여니랑은 상호작용 완전 차단
+    };
+
+    // Vlog 데이터
+    const VLOG_ENTRIES = [
+      {
+        date: "2024.08.12",
+        image: "https://images.unsplash.com/photo-1599707367072-cd6ada2bc375?w=800&auto=format&fit=crop&q=80",
+        note: "원석 팔찌를 처음 건네받은 날. 헛것이 거짓말처럼 멎었다."
+      },
+      {
+        date: "2025.03.04",
+        image: "https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=800&auto=format&fit=crop&q=80",
+        note: "재난관리국 연수원 첫 출근. 적당히 요령 피우며 살 계획이었는데."
+      },
+      {
+        date: "2026.09.14",
+        image: "https://images.unsplash.com/photo-1517849845537-4d257902454a?w=800&auto=format&fit=crop&q=80",
+        note: "현장 대피 완료. 시민들은 울고 있지만 내 팔찌는 차분하다. 다행이다."
+      }
+    ];
+
+    // 날짜 및 슬롯별 고유 리액션 저장소: reactionsDbKey = `${groupName}_${date}_${slotId}`
+    const slotReactionsState = {};
+
+    function getSlotReactionKey(group, date, slotId) {
+      return `${group}_${date}_${slotId}`;
+    }
+
+    // State
+    let currentTab = 'log';
+    let currentVlogIndex = 0;
+    let activeGroupName = "재난관리국";
+    let selectedDate = "2026.09.14"; // 기본 선택일
+    let commentRotationInterval = null;
+    let activeCommentSlotId = null;
+
+    // DOM Elements
+    const logView = document.getElementById('logView');
+    const cameraView = document.getElementById('cameraView');
+    const vlogDetailView = document.getElementById('vlogDetailView');
+    const groupFeedView = document.getElementById('groupFeedView');
+    const mainAppHeader = document.getElementById('mainAppHeader');
+    const bottomNavBar = document.getElementById('bottomNavBar');
+
+    const navLogBtn = document.getElementById('navLogBtn');
+    const navCameraBtn = document.getElementById('navCameraBtn');
+    const toastBox = document.getElementById('toastBox');
+
+    const groupBackBtn = document.getElementById('groupBackBtn');
+    const groupCalendarBtn = document.getElementById('groupCalendarBtn');
+    const groupTitleText = document.getElementById('groupTitleText');
+    const currentDateBadge = document.getElementById('currentDateBadge');
+    const groupSlotsContainer = document.getElementById('groupSlotsContainer');
+
+    const calendarModal = document.getElementById('calendarModal');
+    const closeCalendarModalBtn = document.getElementById('closeCalendarModalBtn');
+    const calendarDatesGrid = document.getElementById('calendarDatesGrid');
+
+    const commentModal = document.getElementById('commentModal');
+    const closeCommentModalBtn = document.getElementById('closeCommentModalBtn');
+    const commentInputText = document.getElementById('commentInputText');
+    const submitCommentBtn = document.getElementById('submitCommentBtn');
+
+    const vlogBannerCard = document.getElementById('vlogBannerCard');
+    const vlogBackBtn = document.getElementById('vlogBackBtn');
+    const vlogSwipeCard = document.getElementById('vlogSwipeCard');
+    const vlogCardImage = document.getElementById('vlogCardImage');
+    const vlogCardDate = document.getElementById('vlogCardDate');
+    const vlogCardNote = document.getElementById('vlogCardNote');
+    const vlogPageCounter = document.getElementById('vlogPageCounter');
+    const prevVlogBtn = document.getElementById('prevVlogBtn');
+    const nextVlogBtn = document.getElementById('nextVlogBtn');
+
+    function updateClock() {
+      const now = new Date();
+      let hours = now.getHours();
+      let minutes = now.getMinutes();
+      const formatted = `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
+      const statusBarTime = document.getElementById('statusBarTime');
+      if (statusBarTime) statusBarTime.innerText = formatted;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    function showToast(text) {
+      if (!toastBox) return;
+      toastBox.innerText = text;
+      toastBox.classList.remove('opacity-0');
+      toastBox.classList.add('opacity-100');
+      setTimeout(() => {
+        toastBox.classList.remove('opacity-100');
+        toastBox.classList.add('opacity-0');
+      }, 2000);
+    }
+
+    // Google Sheets 동기화 (원격에서 댓글 및 리액션 불러오기)
+    async function fetchFromGoogleSheet() {
+      if (!GOOGLE_SHEET_API_URL) return;
+      try {
+        const response = await fetch(GOOGLE_SHEET_API_URL);
+        const data = await response.json();
+        if (Array.isArray(data)) {
+          data.forEach(item => {
+            const { group, date, slot, action, content } = item;
+            if (group && date && slot) {
+              if (action === 'comment') {
+                if (GROUP_FEED_DATABASE[group] && GROUP_FEED_DATABASE[group][date]) {
+                  const targetSlot = GROUP_FEED_DATABASE[group][date].find(s => s.id === slot);
+                  if (targetSlot) {
+                    if (!targetSlot.comments.includes(content)) {
+                      targetSlot.comments.unshift(content);
+                    }
+                  }
+                }
+              } else if (action === 'reaction') {
+                const key = getSlotReactionKey(group, date, slot);
+                if (!slotReactionsState[key]) {
+                  slotReactionsState[key] = { selected: content, count: 1 };
+                } else {
+                  slotReactionsState[key].selected = content;
+                  slotReactionsState[key].count += 1;
+                }
+              }
+            }
+          });
+          // 현재 뷰 갱신
+          if (!groupFeedView.classList.contains('hidden')) {
+            renderGroupFeed();
+          }
+        }
+      } catch (err) {
+        console.debug('Sheets fetch skipped or offline mode');
+      }
+    }
+
+    function switchTab(tab) {
+      currentTab = tab;
+      if (vlogDetailView) vlogDetailView.classList.add('hidden');
+      if (groupFeedView) groupFeedView.classList.add('hidden');
+
+      if (tab === 'log') {
+        if (mainAppHeader) mainAppHeader.classList.remove('hidden');
+        if (logView) logView.classList.remove('hidden');
+        if (cameraView) cameraView.classList.add('hidden');
+
+        if (navLogBtn) navLogBtn.className = "px-5 py-2.5 rounded-full text-xs font-bold bg-white text-slate-900 shadow-md transition";
+        if (navCameraBtn) navCameraBtn.className = "px-5 py-2.5 rounded-full text-xs font-bold text-slate-500 hover:text-slate-800 transition";
+      } else {
+        if (mainAppHeader) mainAppHeader.classList.add('hidden');
+        if (logView) logView.classList.add('hidden');
+        if (cameraView) cameraView.classList.remove('hidden');
+
+        if (navCameraBtn) navCameraBtn.className = "px-5 py-2.5 rounded-full text-xs font-bold bg-white text-slate-900 shadow-md transition";
+        if (navLogBtn) navLogBtn.className = "px-5 py-2.5 rounded-full text-xs font-bold text-slate-500 hover:text-slate-800 transition";
+      }
+    }
+
+    if (navLogBtn) navLogBtn.addEventListener('click', () => switchTab('log'));
+    if (navCameraBtn) navCameraBtn.addEventListener('click', () => switchTab('camera'));
+
+    function createNoiseCanvas() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 180;
+      canvas.height = 130;
+      canvas.className = "absolute inset-0 w-full h-full object-cover pointer-events-none opacity-80 mix-blend-multiply rounded-3xl";
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return canvas;
+
+      function renderNoise() {
+        const imgData = ctx.createImageData(canvas.width, canvas.height);
+        const buffer = new Uint32Array(imgData.data.buffer);
+        const len = buffer.length;
+        for (let i = 0; i < len; i++) {
+          const shade = Math.floor(Math.random() * 70) + 175;
+          buffer[i] = (255 << 24) | (shade << 16) | (shade << 8) | shade;
+        }
+        ctx.putImageData(imgData, 0, 0);
+      }
+      renderNoise();
+      setInterval(renderNoise, 160);
+      return canvas;
+    }
+
+    function openGroupFeed(groupName) {
+      activeGroupName = groupName;
+      if (groupTitleText) groupTitleText.innerText = groupName;
+      if (currentDateBadge) currentDateBadge.innerText = selectedDate.replace('2026.', '');
+
+      if (logView) logView.classList.add('hidden');
+      if (mainAppHeader) mainAppHeader.classList.add('hidden');
+      if (bottomNavBar) bottomNavBar.classList.add('hidden');
+      if (vlogDetailView) vlogDetailView.classList.add('hidden');
+      if (cameraView) cameraView.classList.add('hidden');
+      if (groupFeedView) groupFeedView.classList.remove('hidden');
+
+      renderGroupFeed();
+      if (activeGroupName !== "채여니랑") {
+        startCommentRotation();
+      } else {
+        if (commentRotationInterval) clearInterval(commentRotationInterval);
+      }
+    }
+
+    function closeGroupFeed() {
+      if (commentRotationInterval) clearInterval(commentRotationInterval);
+      if (groupFeedView) groupFeedView.classList.add('hidden');
+      if (mainAppHeader) mainAppHeader.classList.remove('hidden');
+      if (bottomNavBar) bottomNavBar.classList.remove('hidden');
+      if (logView) logView.classList.remove('hidden');
+    }
+
+    if (groupBackBtn) groupBackBtn.addEventListener('click', closeGroupFeed);
+
+    function getSlotComment(slotObj) {
+      if (!slotObj || !slotObj.comments || slotObj.comments.length === 0) {
+        return "오늘도 무사 퇴근 각 📿";
+      }
+      const pool = slotObj.comments;
+      return pool[Math.floor(Math.random() * pool.length)];
+    }
+
+    function renderGroupFeed() {
+      if (!groupSlotsContainer) return;
+      groupSlotsContainer.innerHTML = "";
+
+      const groupData = GROUP_FEED_DATABASE[activeGroupName] || {};
+      const slots = groupData[selectedDate] || createDateSlots("09:00", "13:00", "18:00");
+      const isChaeyeonGroup = (activeGroupName === "채여니랑");
+
+      for (let i = 0; i < 3; i++) {
+        const item = slots[i] || { id: `slot-${i}`, time: "12:00", caption: null, image: null, comments: [] };
+        const slotEl = document.createElement('div');
+        slotEl.className = "w-full aspect-[16/9] min-h-[170px] rounded-3xl overflow-visible relative shadow-sm border border-slate-200/70 flex flex-col justify-between p-3.5 select-none transition shrink-0 bg-zinc-100";
+
+        const reactionKey = getSlotReactionKey(activeGroupName, selectedDate, item.id);
+        const currentReaction = slotReactionsState[reactionKey] || { selected: "☺", count: 0 };
+
+        if (item.image) {
+          // FILLED SLOT
+          let bottomContentHTML = "";
+
+          // '채여니랑' 그룹인 경우: 댓글 및 리액션 등 모든 상호작용 완전 제거
+          if (isChaeyeonGroup) {
+            bottomContentHTML = `
+              <div class="relative z-20 flex items-center justify-end w-full">
+                <span class="text-[10px] text-white/80 font-medium px-2.5 py-0.5 rounded-full bg-black/40 backdrop-blur-sm">
+                  아카이브 🔒
+                </span>
+              </div>
+            `;
+          } else {
+            // 일반 그룹 (재난관리국, 제2 팀): 개별 슬롯 회전 말풍선 + 리액션(4종) + 댓글 작성 버튼
+            bottomContentHTML = `
+              <div class="relative z-20 flex items-end justify-between gap-2 w-full">
+                <!-- Rotating Comment Speech Bubble -->
+                <div class="comment-bubble-container flex-1 min-w-0 pr-1">
+                  <div class="slot-comment-bubble comment-bubble-anim inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/95 text-slate-900 shadow-md backdrop-blur-md max-w-full">
+                    <div class="w-4 h-4 rounded-full overflow-hidden shrink-0 ring-1 ring-slate-200">
+                      <img src="./m4.jpg" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&auto=format&fit=crop&q=80';" class="w-full h-full object-cover">
+                    </div>
+                    <span class="slot-comment-text text-[11px] font-semibold truncate leading-tight" data-slot="${item.id}">
+                      ${getSlotComment(item)}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Action Buttons: [표정 리액션] [말풍선(댓글작성)] -->
+                <div class="relative flex items-center space-x-1.5 shrink-0">
+                  <!-- Floating Reaction Picker Pill (원석/팔찌 제거, 표정 4종만 제공) -->
+                  <div id="reactionPicker-${item.id}" class="reaction-picker-popover hidden absolute bottom-10 right-8 z-30 bg-slate-900/90 backdrop-blur-md text-white px-2 py-1.5 rounded-full shadow-xl flex items-center space-x-2.5 text-base reaction-popup-anim border border-white/20">
+                    <button class="emoji-opt hover:scale-125 transition active:scale-95" data-emoji="😊" title="좋아요">😊</button>
+                    <button class="emoji-opt hover:scale-125 transition active:scale-95" data-emoji="😢" title="슬퍼요">😢</button>
+                    <button class="emoji-opt hover:scale-125 transition active:scale-95" data-emoji="😆" title="웃겨요">😆</button>
+                    <button class="emoji-opt hover:scale-125 transition active:scale-95" data-emoji="😮" title="놀람">😮</button>
+                  </div>
+
+                  <!-- 1. Facial Expression Reaction Toggle Button -->
+                  <button class="reaction-trigger-btn px-2.5 h-7 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md flex items-center justify-center gap-1 text-white text-xs font-semibold shadow transition active:scale-90" 
+                          data-slot="${item.id}" 
+                          title="표정 반응">
+                    <span class="reaction-icon text-sm">${currentReaction.selected}</span>
+                    <span class="reaction-count text-[10px] text-white/90 font-mono">${currentReaction.count > 0 ? currentReaction.count : ''}</span>
+                  </button>
+
+                  <!-- 2. Speech Bubble Icon for Comments -->
+                  <button class="comment-trigger-btn w-7 h-7 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md flex items-center justify-center text-white hover:text-setlog-mint transition active:scale-90 shadow" 
+                          data-slot="${item.id}" 
+                          title="댓글 남기기">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            `;
+          }
+
+          slotEl.innerHTML = `
+            <img src="${item.image}" alt="Feed Photo" class="absolute inset-0 w-full h-full object-cover z-0 rounded-3xl">
+            <div class="absolute inset-0 bg-gradient-to-b from-black/35 via-transparent to-black/55 z-0 pointer-events-none rounded-3xl"></div>
+
+            <!-- Top Left: Min Ji-heon Profile Avatar + Name -->
+            <div class="relative z-10 flex items-center space-x-2">
+              <div class="w-6 h-6 rounded-full bg-white ring-1.5 ring-white/80 overflow-hidden flex items-center justify-center shadow">
+                <img src="./m4.jpg" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&auto=format&fit=crop&q=80';" alt="민지헌" class="w-full h-full object-cover">
+              </div>
+              <span class="text-xs font-bold text-white drop-shadow">민지헌</span>
+            </div>
+
+            <!-- Center Time & Caption (Perfect Center Alignment) -->
+            <div class="relative z-10 my-auto w-full text-center flex flex-col items-center justify-center px-4">
+              <span class="text-base font-black tracking-wider text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] font-sans">
+                ${item.time}
+              </span>
+              <p class="text-xs font-bold text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)] mt-0.5 max-w-[280px] break-keep text-center">
+                ${item.caption || ''}
+              </p>
+            </div>
+
+            <!-- Bottom Row -->
+            ${bottomContentHTML}
+          `;
+        } else {
+          // EMPTY NOISE SLOT
+          slotEl.classList.add('noise-bg');
+          slotEl.appendChild(createNoiseCanvas());
+
+          const contentWrap = document.createElement('div');
+          contentWrap.className = "relative z-10 w-full h-full flex flex-col justify-between";
+          contentWrap.innerHTML = `
+            <div class="flex items-center space-x-2">
+              <div class="w-6 h-6 rounded-full bg-slate-200/90 ring-1 ring-slate-300 overflow-hidden flex items-center justify-center">
+                <img src="./m4.jpg" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&auto=format&fit=crop&q=80';" class="w-full h-full object-cover grayscale opacity-70">
+              </div>
+              <span class="text-xs font-bold text-slate-600">민지헌</span>
+            </div>
+
+            <div class="my-auto w-full text-center flex flex-col items-center justify-center">
+              <span class="text-base font-black tracking-widest text-slate-400/70 font-sans select-none">
+                ${item.time}
+              </span>
+            </div>
+
+            <div class="flex justify-end items-center">
+              <span class="text-[10px] text-slate-500 font-medium px-2 py-0.5 rounded-full bg-white/50 backdrop-blur-sm shadow-xs">기록 대기 중</span>
+            </div>
+          `;
+          slotEl.appendChild(contentWrap);
+        }
+
+        groupSlotsContainer.appendChild(slotEl);
+      }
+
+      if (!isChaeyeonGroup) {
+        attachSlotEventListeners();
+      }
+    }
+
+    function attachSlotEventListeners() {
+      // 1. Comment button click -> Open modal sheet
+      document.querySelectorAll('.comment-trigger-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          activeCommentSlotId = btn.getAttribute('data-slot');
+          openCommentModal();
+        });
+      });
+
+      // 2. Reaction trigger button click -> Toggle picker popover
+      document.querySelectorAll('.reaction-trigger-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const slotId = btn.getAttribute('data-slot');
+          const picker = document.getElementById(`reactionPicker-${slotId}`);
+          
+          document.querySelectorAll('.reaction-picker-popover').forEach(p => {
+            if (p !== picker) p.classList.add('hidden');
+          });
+
+          if (picker) {
+            picker.classList.toggle('hidden');
+          }
+        });
+      });
+
+      // 3. Emoji selection inside picker
+      document.querySelectorAll('.emoji-opt').forEach(emojiBtn => {
+        emojiBtn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const selectedEmoji = emojiBtn.getAttribute('data-emoji');
+          const picker = emojiBtn.closest('.reaction-picker-popover');
+          const slotId = picker.id.replace('reactionPicker-', '');
+
+          const reactionKey = getSlotReactionKey(activeGroupName, selectedDate, slotId);
+          if (!slotReactionsState[reactionKey]) {
+            slotReactionsState[reactionKey] = { selected: selectedEmoji, count: 1 };
+          } else {
+            slotReactionsState[reactionKey].selected = selectedEmoji;
+            slotReactionsState[reactionKey].count += 1;
+          }
+
+          const triggerBtn = document.querySelector(`.reaction-trigger-btn[data-slot="${slotId}"]`);
+          if (triggerBtn) {
+            const iconSpan = triggerBtn.querySelector('.reaction-icon');
+            const countSpan = triggerBtn.querySelector('.reaction-count');
+            if (iconSpan) iconSpan.innerText = selectedEmoji;
+            if (countSpan) countSpan.innerText = slotReactionsState[reactionKey].count;
+          }
+
+          picker.classList.add('hidden');
+          showToast(`반응을 남겼습니다: ${selectedEmoji}`);
+
+          if (GOOGLE_SHEET_API_URL) {
+            try {
+              await fetch(GOOGLE_SHEET_API_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  action: "reaction",
+                  content: selectedEmoji,
+                  group: activeGroupName,
+                  date: selectedDate,
+                  slot: slotId,
+                  author: "민지헌",
+                  timestamp: new Date().toISOString()
+                })
+              });
+            } catch (err) {
+              console.debug('Reaction offline logged');
+            }
+          }
+        });
+      });
+
+      document.addEventListener('click', () => {
+        document.querySelectorAll('.reaction-picker-popover').forEach(p => p.classList.add('hidden'));
+      });
+    }
+
+    // 5-second interval rotating comment bubble per slot
+    function startCommentRotation() {
+      if (commentRotationInterval) clearInterval(commentRotationInterval);
+      if (activeGroupName === "채여니랑") return;
+
+      commentRotationInterval = setInterval(() => {
+        const groupData = GROUP_FEED_DATABASE[activeGroupName] || {};
+        const slots = groupData[selectedDate] || [];
+        const commentBubbles = document.querySelectorAll('.slot-comment-text');
+        
+        commentBubbles.forEach(el => {
+          const slotId = el.getAttribute('data-slot');
+          const targetSlot = slots.find(s => s.id === slotId);
+          if (targetSlot && targetSlot.comments && targetSlot.comments.length > 0) {
+            const newText = getSlotComment(targetSlot);
+            const parent = el.closest('.slot-comment-bubble');
+            if (parent) {
+              parent.classList.remove('comment-bubble-anim');
+              void parent.offsetWidth;
+              parent.classList.add('comment-bubble-anim');
+            }
+            el.innerText = newText;
+          }
+        });
+      }, 5000);
+    }
+
+    function openCommentModal() {
+      if (!commentModal) return;
+      commentModal.classList.remove('hidden');
+      if (commentInputText) {
+        commentInputText.value = '';
+        setTimeout(() => commentInputText.focus(), 100);
+      }
+    }
+
+    function closeCommentModal() {
+      if (!commentModal) return;
+      commentModal.classList.add('hidden');
+    }
+
+    if (closeCommentModalBtn) closeCommentModalBtn.addEventListener('click', closeCommentModal);
+
+    if (submitCommentBtn) {
+      submitCommentBtn.addEventListener('click', async () => {
+        const text = commentInputText ? commentInputText.value.trim() : '';
+        if (!text) {
+          showToast('댓글 내용을 입력해주세요.');
+          return;
+        }
+
+        const groupData = GROUP_FEED_DATABASE[activeGroupName] || {};
+        const slots = groupData[selectedDate] || [];
+        const targetSlot = slots.find(s => s.id === activeCommentSlotId);
+        
+        if (targetSlot) {
+          if (!targetSlot.comments) targetSlot.comments = [];
+          targetSlot.comments.unshift(text);
+
+          const activeBubble = document.querySelector(`.slot-comment-text[data-slot="${activeCommentSlotId}"]`);
+          if (activeBubble) {
+            const parent = activeBubble.closest('.slot-comment-bubble');
+            if (parent) {
+              parent.classList.remove('comment-bubble-anim');
+              void parent.offsetWidth;
+              parent.classList.add('comment-bubble-anim');
+            }
+            activeBubble.innerText = text;
+          }
+        }
+
+        showToast('댓글이 등록되었습니다! (해당 슬롯 반영)');
+        closeCommentModal();
+
+        if (GOOGLE_SHEET_API_URL) {
+          try {
+            await fetch(GOOGLE_SHEET_API_URL, {
+              method: 'POST',
+              mode: 'no-cors',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                action: "comment",
+                group: activeGroupName,
+                date: selectedDate,
+                slot: activeCommentSlotId,
+                author: "민지헌",
+                content: text,
+                timestamp: new Date().toISOString()
+              })
+            });
+          } catch (err) {
+            console.error('Google Sheet comment failed:', err);
+          }
+        }
+      });
+    }
+
+    function renderCalendarDates() {
+      if (!calendarDatesGrid) return;
+      calendarDatesGrid.innerHTML = "";
+
+      DATE_LIST.forEach(date => {
+        const dayLabel = date.replace('2026.', '');
+        const isCurrent = (date === selectedDate);
+        
+        const btn = document.createElement('button');
+        btn.className = `py-2.5 px-3 rounded-2xl text-xs font-bold transition flex flex-col items-center justify-center border ${
+          isCurrent 
+            ? 'bg-setlog-mint text-slate-900 border-setlog-mintDark shadow-sm' 
+            : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-200'
+        }`;
+        
+        btn.innerHTML = `
+          <span class="text-[10px] text-slate-500 font-normal">2026</span>
+          <span class="text-sm font-extrabold font-mono">${dayLabel}</span>
+        `;
+
+        btn.addEventListener('click', () => {
+          selectedDate = date;
+          if (currentDateBadge) currentDateBadge.innerText = dayLabel;
+          closeCalendarModal();
+          showToast(`${dayLabel} 로그로 이동했습니다.`);
+          renderGroupFeed();
+          if (activeGroupName !== "채여니랑") {
+            startCommentRotation();
+          }
+        });
+
+        calendarDatesGrid.appendChild(btn);
+      });
+    }
+
+    function openCalendarModal() {
+      if (!calendarModal) return;
+      renderCalendarDates();
+      calendarModal.classList.remove('hidden');
+    }
+
+    function closeCalendarModal() {
+      if (!calendarModal) return;
+      calendarModal.classList.add('hidden');
+    }
+
+    if (groupCalendarBtn) groupCalendarBtn.addEventListener('click', openCalendarModal);
+    if (closeCalendarModalBtn) closeCalendarModalBtn.addEventListener('click', closeCalendarModal);
+
+    // Group cards click handler in Log View
+    document.querySelectorAll('.group-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const groupName = card.getAttribute('data-group') || '재난관리국';
+        openGroupFeed(groupName);
+      });
+    });
+
+    // Vlog Card Render
+    function renderVlogCard(index) {
+      if (index < 0) index = 0;
+      if (index >= VLOG_ENTRIES.length) index = VLOG_ENTRIES.length - 1;
+      currentVlogIndex = index;
+
+      const item = VLOG_ENTRIES[currentVlogIndex];
+      if (vlogCardImage) vlogCardImage.src = item.image;
+      if (vlogCardDate) vlogCardDate.innerText = item.date;
+      if (vlogCardNote) vlogCardNote.innerText = item.note || "";
+      if (vlogPageCounter) vlogPageCounter.innerText = `${currentVlogIndex + 1} / ${VLOG_ENTRIES.length}`;
+
+      if (vlogSwipeCard) {
+        vlogSwipeCard.classList.remove('slide-card-enter');
+        void vlogSwipeCard.offsetWidth;
+        vlogSwipeCard.classList.add('slide-card-enter');
+      }
+    }
+
+    function openVlogView() {
+      if (logView) logView.classList.add('hidden');
+      if (cameraView) cameraView.classList.add('hidden');
+      if (mainAppHeader) mainAppHeader.classList.add('hidden');
+      if (bottomNavBar) bottomNavBar.classList.add('hidden');
+      if (vlogDetailView) vlogDetailView.classList.remove('hidden');
+      renderVlogCard(0);
+    }
+
+    function closeVlogView() {
+      if (vlogDetailView) vlogDetailView.classList.add('hidden');
+      if (mainAppHeader) mainAppHeader.classList.remove('hidden');
+      if (bottomNavBar) bottomNavBar.classList.remove('hidden');
+      if (logView) logView.classList.remove('hidden');
+    }
+
+    if (vlogBannerCard) vlogBannerCard.addEventListener('click', openVlogView);
+    if (vlogBackBtn) vlogBackBtn.addEventListener('click', closeVlogView);
+
+    if (prevVlogBtn) {
+      prevVlogBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (currentVlogIndex > 0) {
+          renderVlogCard(currentVlogIndex - 1);
+        } else {
+          showToast('가장 첫 번째 기록입니다.');
+        }
+      });
+    }
+
+    if (nextVlogBtn) {
+      nextVlogBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (currentVlogIndex < VLOG_ENTRIES.length - 1) {
+          renderVlogCard(currentVlogIndex + 1);
+        } else {
+          showToast('마지막 기록입니다.');
+        }
+      });
+    }
+
+    // Shutter button flash
+    const shutterBtn = document.getElementById('shutterBtn');
+    if (shutterBtn && cameraView) {
+      shutterBtn.addEventListener('click', () => {
+        const flash = document.createElement('div');
+        flash.className = 'absolute inset-0 bg-white z-50 pointer-events-none transition-opacity duration-300';
+        cameraView.appendChild(flash);
+        setTimeout(() => {
+          flash.classList.add('opacity-0');
+          setTimeout(() => flash.remove(), 300);
+        }, 50);
+        showToast('찰칵! 스냅이 캡처되었습니다.');
+      });
+    }
+
+    // 초기 구글 시트 데이터 불러오기 실행
+    window.addEventListener('DOMContentLoaded', () => {
+      fetchFromGoogleSheet();
+    });
+  </script>
+</body>
+</html>
