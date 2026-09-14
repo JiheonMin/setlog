@@ -618,12 +618,23 @@
     }
 
     // State
-    let currentTab = 'log';
-    let currentVlogIndex = 0;
-    let activeGroupName = "재난관리국";
-    let selectedDate = "2026.09.14"; // 기본 선택일
-    let commentRotationInterval = null;
-    let activeCommentSlotId = null;
+// 변경할 코드:
+let currentGroup = "재난관리국";
+
+// 접속한 당일 날짜 자동 감지 함수
+function getTodayDefaultDate() {
+  const now = new Date();
+  const month = now.getMonth() + 1;
+  const day = now.getDate();
+  
+  // 9월 14일 ~ 9월 26일 사이라면 오늘 날짜로 자동 설정
+  if (month === 9 && day >= 14 && day <= 26) {
+    return `2026.09.${day < 10 ? '0' + day : day}`;
+  }
+  return "2026.09.14"; // 세션 기간 전이거나 후일 때 열릴 기본 날짜
+}
+
+let currentDate = getTodayDefaultDate();
 
     // DOM Elements
     const logView = document.getElementById('logView');
