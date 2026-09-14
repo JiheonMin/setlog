@@ -65,13 +65,6 @@
       0% { opacity: 0; transform: translateY(6px) scale(0.95); }
       100% { opacity: 1; transform: translateY(0) scale(1); }
     }
-    .reaction-popup-anim {
-      animation: popUp 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    }
-    @keyframes popUp {
-      from { opacity: 0; transform: translateY(8px) scale(0.9); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
   </style>
 </head>
 <body class="min-h-screen flex items-center justify-center sm:py-6 font-sans text-setlog-textMain">
@@ -152,7 +145,7 @@
           </div>
         </div>
 
-        <!-- 2 Specific Groups (채여니랑 삭제 완료) -->
+        <!-- 2 Specific Groups -->
         <div class="space-y-3 pt-1">
           
           <!-- [그룹 1: 재난관리국] -->
@@ -550,13 +543,14 @@
       }
     ];
 
+    // 💡 각 표정별(😊, 😢, 😆, 😮) 개별 카운트 저장소
     const slotReactionsState = {};
 
     function getSlotReactionKey(group, date, slotId) {
       return `${group}_${date}_${slotId}`;
     }
 
-    // 상태 관리 (오늘 날짜 자동 감지 및 안전 초기화)
+    // 상태 관리
     const now = new Date();
     const curMonth = now.getMonth() + 1;
     const curDay = now.getDate();
@@ -655,10 +649,13 @@
               } else if (action === 'reaction') {
                 const key = getSlotReactionKey(group, date, slot);
                 if (!slotReactionsState[key]) {
-                  slotReactionsState[key] = { selected: content, count: 1 };
+                  slotReactionsState[key] = { '😊': 0, '😢': 0, '😆': 0, '😮': 0 };
+                }
+                const emoji = content || '😊';
+                if (slotReactionsState[key][emoji] !== undefined) {
+                  slotReactionsState[key][emoji] += 1;
                 } else {
-                  slotReactionsState[key].selected = content;
-                  slotReactionsState[key].count += 1;
+                  slotReactionsState[key][emoji] = 1;
                 }
               }
             }
@@ -721,7 +718,6 @@
       return canvas;
     }
 
-    // 💡 전역 함수로 등록하여 어디서든 호출 보장
     window.openGroupFeed = function(groupName) {
       activeGroupName = groupName || "재난관리국";
       if (groupTitleText) groupTitleText.innerText = activeGroupName;
@@ -766,14 +762,31 @@
         slotEl.className = "w-full aspect-[16/9] min-h-[170px] rounded-3xl overflow-visible relative shadow-sm border border-slate-200/70 flex flex-col justify-between p-3.5 select-none transition shrink-0 bg-zinc-100";
 
         const reactionKey = getSlotReactionKey(activeGroupName, selectedDate, item.id);
-        const currentReaction = slotReactionsState[reactionKey] || { selected: "☺", count: 0 };
+        const reactions = slotReactionsState[reactionKey] || { '😊': 0, '😢': 0, '😆': 0, '😮': 0 };
 
         if (item.image) {
           const hasComments = item.comments && item.comments.length > 0;
           const currentComment = hasComments ? getSlotComment(item) : "";
 
+          // 💡 오른쪽 상단~중간에 댓글 버튼 위로 세로로 얹어지는 4종 표정 박스
+          const reactionsVerticalHTML = `
+            <div class="absolute right-3.5 bottom-12 z-20 flex flex-col items-center gap-1.5 bg-black/45 backdrop-blur-md p-1.5 rounded-full border border-white/10 shadow-lg">
+              ${['😊', '😢', '😆', '😮'].map(em => {
+                const count = reactions[em] || 0;
+                return `
+                  <button class="emoji-vertical-btn flex flex-col items-center justify-center p-0.5 active:scale-125 transition-transform" data-slot="${item.id}" data-emoji="${em}" title="${em}">
+                    <span class="text-sm leading-none">${em}</span>
+                    <span class="emoji-count text-[9px] font-bold font-mono text-white/90 leading-tight mt-0.5">${count > 0 ? count : 0}</span>
+                  </button>
+                `;
+              }).join('')}
+            </div>
+          `;
+
           const bottomContentHTML = `
+            ${reactionsVerticalHTML}
             <div class="relative z-20 flex items-end justify-between gap-2 w-full">
+              <!-- 말풍선 (왼쪽 하단) -->
               <div class="comment-bubble-container flex-1 min-w-0 pr-1">
                 <div class="slot-comment-bubble comment-bubble-anim inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/95 text-slate-900 shadow-md backdrop-blur-md max-w-full ${hasComments ? '' : 'hidden'}">
                   <div class="w-4 h-4 rounded-full overflow-hidden shrink-0 ring-1 ring-slate-200">
@@ -785,25 +798,12 @@
                 </div>
               </div>
 
-              <div class="relative flex items-center space-x-1.5 shrink-0">
-                <div id="reactionPicker-${item.id}" class="reaction-picker-popover hidden absolute bottom-10 right-8 z-30 bg-slate-900/90 backdrop-blur-md text-white px-2 py-1.5 rounded-full shadow-xl flex items-center space-x-2.5 text-base reaction-popup-anim border border-white/20">
-                  <button class="emoji-opt hover:scale-125 transition active:scale-95" data-emoji="😊" title="좋아요">😊</button>
-                  <button class="emoji-opt hover:scale-125 transition active:scale-95" data-emoji="😢" title="슬퍼요">😢</button>
-                  <button class="emoji-opt hover:scale-125 transition active:scale-95" data-emoji="😆" title="웃겨요">😆</button>
-                  <button class="emoji-opt hover:scale-125 transition active:scale-95" data-emoji="😮" title="놀람">😮</button>
-                </div>
-
-                <button class="reaction-trigger-btn px-2.5 h-7 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md flex items-center justify-center gap-1 text-white text-xs font-semibold shadow transition active:scale-90" 
-                        data-slot="${item.id}" 
-                        title="표정 반응">
-                  <span class="reaction-icon text-sm">${currentReaction.selected}</span>
-                  <span class="reaction-count text-[10px] text-white/90 font-mono">${currentReaction.count > 0 ? currentReaction.count : ''}</span>
-                </button>
-
-                <button class="comment-trigger-btn w-7 h-7 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md flex items-center justify-center text-white hover:text-setlog-mint transition active:scale-90 shadow" 
+              <!-- 댓글 작성 버튼 (오른쪽 하단) -->
+              <div class="relative flex items-center shrink-0">
+                <button class="comment-trigger-btn w-8 h-8 rounded-full bg-black/50 hover:bg-black/70 backdrop-blur-md flex items-center justify-center text-white hover:text-setlog-mint transition active:scale-90 shadow-md border border-white/15" 
                         data-slot="${item.id}" 
                         title="댓글 남기기">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
                   </svg>
                 </button>
@@ -826,7 +826,7 @@
               <span class="text-base font-black tracking-wider text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] font-sans">
                 ${item.time}
               </span>
-              <p class="text-xs font-bold text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)] mt-0.5 max-w-[280px] break-keep text-center">
+              <p class="text-xs font-bold text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)] mt-0.5 max-w-[240px] break-keep text-center">
                 ${item.caption || ''}
               </p>
             </div>
@@ -867,6 +867,7 @@
     }
 
     function attachSlotEventListeners() {
+      // 댓글 작성 모달 트리거
       document.querySelectorAll('.comment-trigger-btn').forEach(btn => {
         btn.onclick = (e) => {
           e.stopPropagation();
@@ -875,48 +876,29 @@
         };
       });
 
-      document.querySelectorAll('.reaction-trigger-btn').forEach(btn => {
-        btn.onclick = (e) => {
-          e.stopPropagation();
-          const slotId = btn.getAttribute('data-slot');
-          const picker = document.getElementById(`reactionPicker-${slotId}`);
-          
-          document.querySelectorAll('.reaction-picker-popover').forEach(p => {
-            if (p !== picker) p.classList.add('hidden');
-          });
-
-          if (picker) {
-            picker.classList.toggle('hidden');
-          }
-        };
-      });
-
-      document.querySelectorAll('.emoji-opt').forEach(emojiBtn => {
+      // 💡 세로로 나열된 각 표정 클릭 시 개별 카운트 증가 및 시트 전송
+      document.querySelectorAll('.emoji-vertical-btn').forEach(emojiBtn => {
         emojiBtn.onclick = async (e) => {
           e.stopPropagation();
           const selectedEmoji = emojiBtn.getAttribute('data-emoji');
-          const picker = emojiBtn.closest('.reaction-picker-popover');
-          const slotId = picker.id.replace('reactionPicker-', '');
+          const slotId = emojiBtn.getAttribute('data-slot');
 
           const reactionKey = getSlotReactionKey(activeGroupName, selectedDate, slotId);
           if (!slotReactionsState[reactionKey]) {
-            slotReactionsState[reactionKey] = { selected: selectedEmoji, count: 1 };
-          } else {
-            slotReactionsState[reactionKey].selected = selectedEmoji;
-            slotReactionsState[reactionKey].count += 1;
+            slotReactionsState[reactionKey] = { '😊': 0, '😢': 0, '😆': 0, '😮': 0 };
           }
 
-          const triggerBtn = document.querySelector(`.reaction-trigger-btn[data-slot="${slotId}"]`);
-          if (triggerBtn) {
-            const iconSpan = triggerBtn.querySelector('.reaction-icon');
-            const countSpan = triggerBtn.querySelector('.reaction-count');
-            if (iconSpan) iconSpan.innerText = selectedEmoji;
-            if (countSpan) countSpan.innerText = slotReactionsState[reactionKey].count;
+          slotReactionsState[reactionKey][selectedEmoji] = (slotReactionsState[reactionKey][selectedEmoji] || 0) + 1;
+
+          // UI 숫자 즉시 반영
+          const countSpan = emojiBtn.querySelector('.emoji-count');
+          if (countSpan) {
+            countSpan.innerText = slotReactionsState[reactionKey][selectedEmoji];
           }
 
-          picker.classList.add('hidden');
-          showToast(`반응을 남겼습니다: ${selectedEmoji}`);
+          showToast(`${selectedEmoji} 반응을 남겼습니다!`);
 
+          // 구글 시트 전송
           if (GOOGLE_SHEET_API_URL) {
             try {
               await fetch(GOOGLE_SHEET_API_URL, {
@@ -939,10 +921,6 @@
           }
         };
       });
-
-      document.onclick = () => {
-        document.querySelectorAll('.reaction-picker-popover').forEach(p => p.classList.add('hidden'));
-      };
     }
 
     function startCommentRotation() {
