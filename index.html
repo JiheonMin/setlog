@@ -654,9 +654,9 @@
               } else if (action === 'reaction') {
                 const key = getSlotReactionKey(group, date, slot);
                 if (!slotReactionsState[key]) {
-                  slotReactionsState[key] = { '😊': 0, '😢': 0, '😆': 0, '😮': 0 };
+                  slotReactionsState[key] = { '🥰': 0, '😢': 0, '😆': 0, '😮': 0 };
                 }
-                const emoji = item.emoji || content || '😊';
+                const emoji = item.emoji || content || '🥰';
                 if (slotReactionsState[key][emoji] !== undefined) {
                   slotReactionsState[key][emoji] += 1;
                 } else {
@@ -767,7 +767,7 @@
         slotEl.className = "w-full aspect-[16/9] min-h-[170px] rounded-3xl overflow-visible relative shadow-sm border border-slate-200/70 flex flex-col justify-between p-3.5 select-none transition shrink-0 bg-zinc-100";
 
         const reactionKey = getSlotReactionKey(activeGroupName, selectedDate, item.id);
-        const reactions = slotReactionsState[reactionKey] || { '😊': 0, '😢': 0, '😆': 0, '😮': 0 };
+        const reactions = slotReactionsState[reactionKey] || { '🥰': 0, '😢': 0, '😆': 0, '😮': 0 };
 
         if (item.image) {
           const hasComments = item.comments && item.comments.length > 0;
@@ -776,7 +776,7 @@
           // 💡 오른쪽 상단~중간에 댓글 버튼 위로 세로로 얹어지는 4종 표정 박스
           const reactionsVerticalHTML = `
             <div class="absolute right-3.5 bottom-12 z-20 flex flex-col items-center gap-1.5 bg-black/45 backdrop-blur-md p-1.5 rounded-full border border-white/10 shadow-lg">
-              ${['😊', '😢', '😆', '😮'].map(em => {
+              ${['🥰', '😢', '😆', '😮'].map(em => {
                 const count = reactions[em] || 0;
                 return `
                   <button class="emoji-vertical-btn flex flex-col items-center justify-center p-0.5 active:scale-125 transition-transform" data-slot="${item.id}" data-emoji="${em}" title="${em}">
@@ -890,7 +890,7 @@
 
           const reactionKey = getSlotReactionKey(activeGroupName, selectedDate, slotId);
           if (!slotReactionsState[reactionKey]) {
-            slotReactionsState[reactionKey] = { '😊': 0, '😢': 0, '😆': 0, '😮': 0 };
+            slotReactionsState[reactionKey] = { '🥰': 0, '😢': 0, '😆': 0, '😮': 0 };
           }
 
           slotReactionsState[reactionKey][selectedEmoji] = (slotReactionsState[reactionKey][selectedEmoji] || 0) + 1;
