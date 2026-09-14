@@ -1036,34 +1036,35 @@
     }
 
     // 5-second interval rotating comment bubble per slot
-    function startCommentRotation() {
-      if (commentRotationInterval) clearInterval(commentRotationInterval);
-      if (activeGroupName === "채여니랑") return;
+// 각 슬롯별로 몇 번째 댓글까지 보여줬는지 기억하는 인덱스 저장소
+const slotCommentIndices = {};
 
-      commentRotationInterval = setInterval(() => {
-        const groupData = GROUP_FEED_DATABASE[activeGroupName] || {};
-        const slots = groupData[selectedDate] || [];
-        const commentBubbles = document.querySelectorAll('.slot-comment-text');
-        
-        commentBubbles.forEach(el => {
-          const slotId = el.getAttribute('data-slot');
-          const targetSlot = slots.find(s => s.id === slotId);
-          const parent = el.closest('.slot-comment-bubble');
-          if (targetSlot && targetSlot.comments && targetSlot.comments.length > 0) {
-            const newText = getSlotComment(targetSlot);
-            if (parent) {
-              parent.classList.remove('hidden');
-              parent.classList.remove('comment-bubble-anim');
-              void parent.offsetWidth;
-              parent.classList.add('comment-bubble-anim');
-            }
-            el.innerText = newText;
-          } else {
-            if (parent) parent.classList.add('hidden');
-          }
-        });
-      }, 5000);
+function startCommentRotation() {
+  if (commentRotatorInterval) clearInterval(commentRotatorInterval);
+
+  // 💡 [초 수정 위치]: 맨 뒤의 5000을 변경하세요 (3000 = 3초, 5000 = 5초, 7000 = 7초)
+  commentRotatorInterval = setInterval(() => {
+    for (let i = 0; i < 3; i++) {
+      const slotKey = getStorageKey(currentGroup, currentDate, i);
+      const comments = MEMORY_DB.comments[slotKey] || [];
+      const bubble = document.getElementById(`bubble-${slotKey}`);
+
+      if (bubble && comments.length > 0) {
+        // 인덱스가 없으면 0번부터 시작
+        if (slotCommentIndices[slotKey] === undefined) {
+          slotCommentIndices[slotKey] = 0;
+        } else {
+          // 다음 순서로 넘어가고, 끝까지 가면 다시 첫 번째(0)로 순환
+          slotCommentIndices[slotKey] = (slotCommentIndices[slotKey] + 1) % comments.length;
+        }
+
+        const nextComment = comments[slotCommentIndices[slotKey]];
+        const span = bubble.querySelector(".bubble-text");
+        if (span) span.textContent = nextComment;
+      }
     }
+  }, 3000); // 👈 5초 주기 (원하는 초 단위 * 1000 입력)
+}
 
     function openCommentModal() {
       if (!commentModal) return;
