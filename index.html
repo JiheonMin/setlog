@@ -570,10 +570,17 @@
     const curMonth = now.getMonth() + 1;
     const curDay = now.getDate();
     
+// 상태 관리 (오전 9시 기준 하루 갱신)
+    const now = new Date();
+    // 💡 오전 9시 이전(00:00 ~ 08:59)이면 9시간을 빼서 '어제' 날짜로 계산
+    const effectiveDate = new Date(now.getTime() - (9 * 60 * 60 * 1000));
+    const curMonth = effectiveDate.getMonth() + 1;
+    const curDay = effectiveDate.getDate();
+    
     const defaultDate = (curMonth === 9 && curDay >= 14 && curDay <= 26)
       ? `2026.09.${curDay < 10 ? '0' + curDay : curDay}`
       : "2026.09.14";
-
+    
     let activeGroupName = "재난관리국";
     let selectedDate = defaultDate;
     let currentTab = "log";
