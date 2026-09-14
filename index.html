@@ -990,7 +990,7 @@ if (submitCommentBtn) {
         const hashBuf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(saltedPw));
         const hashHex = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
 
-        if (hashHex !== "37b3ba6c7aa42d4cfab9273c52431cb2c9bf80db42337a6ce5358aa0fa6fce7c") {
+if (hashHex !== "8894df22beab5f2d0fa3b827e8a94628f24aa5a9cfecae7871b69519ae2c6769") {
           showToast("공무원은 품위 유지 의무 있다구 셋로그 하지 말래~");
           return;
         }
