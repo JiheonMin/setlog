@@ -986,11 +986,7 @@ if (submitCommentBtn) {
 
 // 🔒 
         const enteredPw = prompt("셋로그 개설한 건 비밀이야") || "";
-        
-        // 입력받은 비밀번호
-        const encodedCheck = btoa("bJH/" + enteredPw + "_mj");
-
-        if (encodedCheck !== "YUpJTC85NTAxMTFfbWpq") {
+        if (btoa(enteredPw) !== "OTUwMTEx") {
           showToast("공무원은 품위 유지 의무 때문에 셋로그 금지야~");
           return;
         }
