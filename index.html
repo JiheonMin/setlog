@@ -984,14 +984,14 @@ if (submitCommentBtn) {
           return;
         }
 
-// 🔒 관리자 비밀번호 검증
+// 🔒 
         const enteredPw = prompt("셋로그 개설한 건 비밀이야") || "";
-        const saltedPw = enteredPw + "_mjh_2026!";
-        const hashBuf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(saltedPw));
-        const hashHex = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
+        
+        // 입력받은 비밀번호
+        const encodedCheck = btoa("bJH/" + enteredPw + "_mj");
 
-if (hashHex !== "8894df22beab5f2d0fa3b827e8a94628f24aa5a9cfecae7871b69519ae2c6769") {
-          showToast("공무원은 품위 유지 의무 있다구 셋로그 하지 말래~");
+        if (encodedCheck !== "YUpJTC85NTAxMTFfbWpq") {
+          showToast("공무원은 품위 유지 의무 때문에 셋로그 금지야~");
           return;
         }
 
