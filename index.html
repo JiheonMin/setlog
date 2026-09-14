@@ -536,8 +536,8 @@
   <script>
     const DEFAULT_PROFILE_IMG = './m4.jpg';
 
-    // Google Sheets API Web App 배포 URL (스프레드시트 배포 후 여기에 붙여넣기)
-    const GOOGLE_SHEET_API_URL = ""; 
+// 여기에 복사한 URL을 넣으시면 즉시 연동됩니다.
+const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbybJFxTUOjHUvBuhx_cppWhrLqEWAIVM2z6u-u-Qjx5La-q_Lfjl5QnGzJiN9GiRvk9/exec";
 
     // 지원 날짜 목록: 2026.09.14 ~ 2026.09.26 (총 13일)
     const DATE_LIST = [
@@ -672,6 +672,8 @@
 
     const commentModal = document.getElementById('commentModal');
     const closeCommentModalBtn = document.getElementById('closeCommentModalBtn');
+    const commentAuthorText = document.getElementById('commentAuthorText');
+    const anonToggleBtn = document.getElementById('anonToggleBtn');
     const commentInputText = document.getElementById('commentInputText');
     const submitCommentBtn = document.getElementById('submitCommentBtn');
 
@@ -715,14 +717,15 @@
         const data = await response.json();
         if (Array.isArray(data)) {
           data.forEach(item => {
-            const { group, date, slot, action, content } = item;
+            const { group, date, slot, action, author, content } = item;
             if (group && date && slot) {
               if (action === 'comment') {
                 if (GROUP_FEED_DATABASE[group] && GROUP_FEED_DATABASE[group][date]) {
                   const targetSlot = GROUP_FEED_DATABASE[group][date].find(s => s.id === slot);
                   if (targetSlot) {
-                    if (!targetSlot.comments.includes(content)) {
-                      targetSlot.comments.unshift(content);
+                    const formattedComment = (author && author !== '익명') ? `${author}: ${content}` : `${content}`;
+                    if (!targetSlot.comments.includes(formattedComment)) {
+                      targetSlot.comments.unshift(formattedComment);
                     }
                   }
                 }
@@ -1082,10 +1085,23 @@
     function openCommentModal() {
       if (!commentModal) return;
       commentModal.classList.remove('hidden');
+      if (commentAuthorText) commentAuthorText.value = '';
       if (commentInputText) {
         commentInputText.value = '';
         setTimeout(() => commentInputText.focus(), 100);
       }
+    }
+
+    if (anonToggleBtn) {
+      anonToggleBtn.addEventListener('click', () => {
+        if (!commentAuthorText) return;
+        if (commentAuthorText.value === '익명') {
+          commentAuthorText.value = '';
+          commentAuthorText.placeholder = "작성자 닉네임 (미입력 시 '익명')";
+        } else {
+          commentAuthorText.value = '익명';
+        }
+      });
     }
 
     function closeCommentModal() {
@@ -1103,13 +1119,19 @@
           return;
         }
 
+        // 작성자 닉네임 판별 (미입력 시 기본 '익명')
+        let author = (commentAuthorText && commentAuthorText.value.trim()) ? commentAuthorText.value.trim() : '익명';
+
+        // 화면 말풍선에 노출할 텍스트 형식 (닉네임 입력 시 "이름: 내용", 익명 선택 시 "내용" 또는 "익명: 내용")
+        const displayText = (author === '익명') ? text : `${author}: ${text}`;
+
         const groupData = GROUP_FEED_DATABASE[activeGroupName] || {};
         const slots = groupData[selectedDate] || [];
         const targetSlot = slots.find(s => s.id === activeCommentSlotId);
         
         if (targetSlot) {
           if (!targetSlot.comments) targetSlot.comments = [];
-          targetSlot.comments.unshift(text);
+          targetSlot.comments.unshift(displayText);
 
           const activeBubble = document.querySelector(`.slot-comment-text[data-slot="${activeCommentSlotId}"]`);
           if (activeBubble) {
@@ -1119,11 +1141,11 @@
               void parent.offsetWidth;
               parent.classList.add('comment-bubble-anim');
             }
-            activeBubble.innerText = text;
+            activeBubble.innerText = displayText;
           }
         }
 
-        showToast('댓글이 등록되었습니다! (해당 슬롯 반영)');
+        showToast(`${author}(으)로 댓글이 등록되었습니다!`);
         closeCommentModal();
 
         if (GOOGLE_SHEET_API_URL) {
@@ -1137,7 +1159,7 @@
                 group: activeGroupName,
                 date: selectedDate,
                 slot: activeCommentSlotId,
-                author: "민지헌",
+                author: author,
                 content: text,
                 timestamp: new Date().toISOString()
               })
