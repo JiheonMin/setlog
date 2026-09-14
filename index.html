@@ -1173,13 +1173,6 @@ if (GOOGLE_SHEET_API_URL) {
     if (groupCalendarBtn) groupCalendarBtn.addEventListener('click', openCalendarModal);
     if (closeCalendarModalBtn) closeCalendarModalBtn.addEventListener('click', closeCalendarModal);
 
-    // Group cards click handler in Log View
-    document.querySelectorAll('.group-card').forEach(card => {
-      card.addEventListener('click', () => {
-        const groupName = card.getAttribute('data-group') || '재난관리국';
-        openGroupFeed(groupName);
-      });
-    });
 
     // Vlog Card Render
     function renderVlogCard(index) {
