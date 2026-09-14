@@ -42,13 +42,8 @@
     body {
       background-color: #e5e9f0;
     }
-    .hide-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    .hide-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .setlog-logo-text {
       font-family: 'Jua', sans-serif;
       letter-spacing: -0.02em;
@@ -116,7 +111,7 @@
         </div>
       </div>
 
-      <!-- Static Profile Avatar (Visitor upload disabled) -->
+      <!-- Static Profile Avatar -->
       <div class="relative select-none" id="profileAvatarContainer">
         <div class="w-11 h-11 rounded-full p-0.5 bg-slate-100 ring-2 ring-slate-200 overflow-hidden flex items-center justify-center shadow-sm">
           <img id="profileImage" 
@@ -131,9 +126,7 @@
     <!-- Views Container -->
     <div class="relative flex-1 w-full overflow-hidden flex flex-col">
 
-      <!-- ============================================== -->
-      <!-- VIEW 1: MAIN LOG VIEW (Banner & 3 Custom Groups) -->
-      <!-- ============================================== -->
+      <!-- VIEW 1: MAIN LOG VIEW -->
       <div id="logView" class="w-full h-full flex flex-col px-5 overflow-y-auto hide-scrollbar space-y-4 pb-24 transition-opacity duration-200">
         
         <!-- Vlog Banner Card -->
@@ -163,7 +156,7 @@
         <div class="space-y-3 pt-1">
           
           <!-- [그룹 1: 재난관리국] -->
-          <div onclick="openGroupFeed('재난관리국')" class="group-card bg-white rounded-2xl p-4 flex items-center justify-between border border-slate-100 shadow-sm active:scale-[0.99] transition cursor-pointer hover:border-setlog-mint/50">
+          <div onclick="window.openGroupFeed('재난관리국')" class="group-card bg-white rounded-2xl p-4 flex items-center justify-between border border-slate-100 shadow-sm active:scale-[0.99] transition cursor-pointer hover:border-setlog-mint/50">
             <div class="flex items-center space-x-3.5">
               <div class="w-12 h-12 rounded-2xl bg-[#eff3f8] flex items-center justify-center text-slate-700 font-bold overflow-hidden border border-slate-200/60 relative">
                 <span class="text-xl">📿</span>
@@ -185,7 +178,7 @@
           </div>
 
           <!-- [그룹 2: 제2 팀] -->
-          <div onclick="openGroupFeed('제2 팀')" class="group-card bg-white rounded-2xl p-4 flex items-center justify-between border border-slate-100 shadow-sm active:scale-[0.99] transition cursor-pointer hover:border-setlog-mint/50">
+          <div onclick="window.openGroupFeed('제2 팀')" class="group-card bg-white rounded-2xl p-4 flex items-center justify-between border border-slate-100 shadow-sm active:scale-[0.99] transition cursor-pointer hover:border-setlog-mint/50">
             <div class="flex items-center space-x-3.5">
               <div class="w-12 h-12 rounded-2xl bg-[#eff3f8] flex items-center justify-center text-slate-700 font-bold overflow-hidden border border-slate-200/60">
                 <span class="text-xl">🏢</span>
@@ -210,9 +203,7 @@
 
       </div>
 
-      <!-- ============================================== -->
-      <!-- VIEW 4: GROUP LOG VIEW (With Date Selector & 3 Slots) -->
-      <!-- ============================================== -->
+      <!-- VIEW 4: GROUP LOG VIEW -->
       <div id="groupFeedView" class="w-full h-full hidden flex flex-col px-4 pb-4 overflow-hidden">
         
         <!-- Group View Top Navigation Bar -->
@@ -223,7 +214,7 @@
             </svg>
           </button>
 
-          <!-- Calendar Button (Opens Date Picker Modal) -->
+          <!-- Calendar Button -->
           <button id="groupCalendarBtn" class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 active:scale-95 transition" title="날짜 선택">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
@@ -237,7 +228,7 @@
             <span id="currentDateBadge" class="text-setlog-mintDark font-mono font-bold">09.14</span>
           </div>
 
-          <div class="w-9 h-9"></div> <!-- Spacer for perfect center alignment -->
+          <div class="w-9 h-9"></div>
         </div>
 
         <!-- Dot Pagination Indicator -->
@@ -252,14 +243,11 @@
 
         <!-- 3-Slot Vertical Feed Container -->
         <div id="groupSlotsContainer" class="flex-1 overflow-y-auto hide-scrollbar flex flex-col space-y-3 pt-1 pb-6">
-          <!-- Dynamically populated via renderGroupFeed() -->
         </div>
 
       </div>
 
-      <!-- ============================================== -->
-      <!-- VIEW 2: VLOG DETAIL VIEW (Matches IMG_0338.jpg) -->
-      <!-- ============================================== -->
+      <!-- VIEW 2: VLOG DETAIL VIEW -->
       <div id="vlogDetailView" class="w-full h-full hidden flex flex-col px-5 pb-6 overflow-hidden">
         
         <div class="flex items-center justify-between pt-1 pb-4 shrink-0">
@@ -332,9 +320,7 @@
 
       </div>
 
-      <!-- ============================================== -->
-      <!-- VIEW 3: CAMERA VIEW (Static Viewfinder Interface) -->
-      <!-- ============================================== -->
+      <!-- VIEW 3: CAMERA VIEW -->
       <div id="cameraView" class="w-full h-full hidden flex flex-col relative bg-black select-none">
         
         <div class="relative w-full flex-1 overflow-hidden bg-zinc-950 flex items-center justify-center">
@@ -361,7 +347,7 @@
             <div class="w-2 h-0.5 bg-yellow-400"></div>
           </div>
 
-          <!-- HUD Header (Photo change upload disabled) -->
+          <!-- HUD Header -->
           <div class="absolute top-4 inset-x-4 flex items-center justify-between text-white/90 text-xs font-mono drop-shadow">
             <span class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-md">
               <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
@@ -405,14 +391,12 @@
     <!-- Bottom Setlog Navigation Bar -->
     <nav id="bottomNavBar" class="absolute bottom-4 inset-x-6 z-40 flex items-center justify-between select-none">
       
-      <!-- Bell Button -->
       <button class="w-12 h-12 rounded-full bg-white shadow-[0_4px_16px_rgba(0,0,0,0.08)] flex items-center justify-center text-slate-800 hover:bg-slate-50 active:scale-95 transition border border-slate-100">
         <svg class="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
         </svg>
       </button>
 
-      <!-- Center Segmented Pill: [카메라 | 로그] -->
       <div class="flex items-center p-1 bg-[#e9ecf0] rounded-full shadow-inner">
         <button id="navCameraBtn" class="px-5 py-2.5 rounded-full text-xs font-bold text-slate-500 hover:text-slate-800 transition">
           카메라
@@ -422,7 +406,6 @@
         </button>
       </div>
 
-      <!-- Plus Button -->
       <button class="w-12 h-12 rounded-full bg-white shadow-[0_4px_16px_rgba(0,0,0,0.08)] flex items-center justify-center text-slate-800 hover:bg-slate-50 active:scale-95 transition border border-slate-100">
         <svg class="w-5 h-5 text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
@@ -436,9 +419,7 @@
       <div class="w-32 h-1 bg-slate-900/40 rounded-full"></div>
     </div>
 
-    <!-- ============================================== -->
-    <!-- CALENDAR DATE PICKER MODAL (9/14 ~ 9/26)       -->
-    <!-- ============================================== -->
+    <!-- CALENDAR DATE PICKER MODAL (9/14 ~ 9/26) -->
     <div id="calendarModal" class="absolute inset-0 bg-black/60 z-50 flex items-end justify-center hidden backdrop-blur-[2px] transition-opacity">
       <div class="w-full bg-white rounded-t-3xl p-5 shadow-2xl space-y-4 animate-in slide-in-from-bottom duration-200 max-h-[80%] flex flex-col">
         <div class="flex items-center justify-between pb-2 border-b border-slate-100">
@@ -457,14 +438,11 @@
 
         <!-- Dates Grid List -->
         <div id="calendarDatesGrid" class="grid grid-cols-3 gap-2 overflow-y-auto hide-scrollbar py-1">
-          <!-- Populated dynamically via renderCalendarDates() -->
         </div>
       </div>
     </div>
 
-    <!-- ============================================== -->
-    <!-- COMMENT INPUT MODAL SHEET                      -->
-    <!-- ============================================== -->
+    <!-- COMMENT INPUT MODAL SHEET -->
     <div id="commentModal" class="absolute inset-0 bg-black/60 z-50 flex items-end justify-center hidden backdrop-blur-[2px] transition-opacity">
       <div class="w-full bg-white rounded-t-3xl p-5 shadow-2xl space-y-3 animate-in slide-in-from-bottom duration-200">
         <div class="flex items-center justify-between pb-1 border-b border-slate-100">
@@ -478,7 +456,7 @@
           <input type="text" 
                  id="commentInputText" 
                  placeholder="댓글 내용을 입력하세요..." 
-                 maxlength="60"
+                 maxlength="60" 
                  class="w-full px-4 py-3 rounded-2xl bg-slate-100 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-setlog-mint font-medium">
         </div>
 
@@ -503,7 +481,7 @@
   <script>
     const DEFAULT_PROFILE_IMG = './images/m4.png';
 
-    // Google Sheets API Web App 배포 URL (스프레드시트 배포 후 여기에 붙여넣기)
+    // Google Sheets API Web App 배포 URL
     const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbybJFxTUOjHUvBuhx_cppWhrLqEWAIVM2z6u-u-Qjx5La-q_Lfjl5QnGzJiN9GiRvk9/exec"; 
 
     // 지원 날짜 목록: 2026.09.14 ~ 2026.09.26 (총 13일)
@@ -513,7 +491,6 @@
       "2026.09.22", "2026.09.23", "2026.09.24", "2026.09.25", "2026.09.26"
     ];
 
-    // 날짜별 3슬롯 기본 데이터베이스 템플릿 생성기
     function createDateSlots(defaultTime1, defaultTime2, defaultTime3) {
       return [
         { id: "slot-0", time: defaultTime1, caption: null, image: null, comments: [] },
@@ -522,20 +499,16 @@
       ];
     }
 
-    // 그룹별 날짜 데이터베이스
-    // (💡 깃허브에서 사진을 공개할 때 해당 날짜의 image와 caption을 채워 넣으시면 됩니다)
     const GROUP_FEED_DATABASE = {
       "재난관리국": {},
-      "제2 팀": {},
+      "제2 팀": {}
     };
 
-    // 9.14 ~ 9.26 초기 슬롯 기본 생성 (기본은 노이즈 화면)
     DATE_LIST.forEach(date => {
       GROUP_FEED_DATABASE["재난관리국"][date] = createDateSlots("09:30", "12:00", "18:00");
       GROUP_FEED_DATABASE["제2 팀"][date] = createDateSlots("10:15", "14:00", "19:30");
     });
 
-    // --- 9.14 기본 슬롯 등록 (샘플 댓글 완전 제거: 빈 배열로 통일) ---
     GROUP_FEED_DATABASE["재난관리국"]["2026.09.14"][0] = {
       id: "slot-0",
       time: "09:30",
@@ -559,7 +532,6 @@
       comments: []
     };
     
-    // Vlog 데이터
     const VLOG_ENTRIES = [
       {
         date: "2024.08.12",
@@ -578,22 +550,17 @@
       }
     ];
 
-    // 날짜 및 슬롯별 고유 리액션 저장소: reactionsDbKey = `${groupName}_${date}_${slotId}`
     const slotReactionsState = {};
 
     function getSlotReactionKey(group, date, slotId) {
       return `${group}_${date}_${slotId}`;
     }
 
-    // State
-// ==========================================
-    // 상태 관리 (누락 변수 선언 & 오늘 날짜 자동 감지)
-    // ==========================================
+    // 상태 관리 (오늘 날짜 자동 감지 및 안전 초기화)
     const now = new Date();
     const curMonth = now.getMonth() + 1;
     const curDay = now.getDate();
     
-    // 오늘이 9월 14일 ~ 26일 사이라면 해당 날짜로 자동 세팅
     const defaultDate = (curMonth === 9 && curDay >= 14 && curDay <= 26)
       ? `2026.09.${curDay < 10 ? '0' + curDay : curDay}`
       : "2026.09.14";
@@ -630,8 +597,6 @@
 
     const commentModal = document.getElementById('commentModal');
     const closeCommentModalBtn = document.getElementById('closeCommentModalBtn');
-    const commentAuthorText = document.getElementById('commentAuthorText');
-    const anonToggleBtn = document.getElementById('anonToggleBtn');
     const commentInputText = document.getElementById('commentInputText');
     const submitCommentBtn = document.getElementById('submitCommentBtn');
 
@@ -646,9 +611,9 @@
     const nextVlogBtn = document.getElementById('nextVlogBtn');
 
     function updateClock() {
-      const now = new Date();
-      let hours = now.getHours();
-      let minutes = now.getMinutes();
+      const d = new Date();
+      let hours = d.getHours();
+      let minutes = d.getMinutes();
       const formatted = `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
       const statusBarTime = document.getElementById('statusBarTime');
       if (statusBarTime) statusBarTime.innerText = formatted;
@@ -667,7 +632,7 @@
       }, 2000);
     }
 
-    // Google Sheets 동기화 (원격에서 댓글 및 리액션 불러오기)
+    // Google Sheets 동기화
     async function fetchFromGoogleSheet() {
       if (!GOOGLE_SHEET_API_URL) return;
       try {
@@ -698,7 +663,6 @@
               }
             }
           });
-// 현재 뷰 갱신 및 댓글 순환 재시작
           if (!groupFeedView.classList.contains('hidden')) {
             renderGroupFeed();
             startCommentRotation();
@@ -757,9 +721,10 @@
       return canvas;
     }
 
-    function openGroupFeed(groupName) {
-      activeGroupName = groupName;
-      if (groupTitleText) groupTitleText.innerText = groupName;
+    // 💡 전역 함수로 등록하여 어디서든 호출 보장
+    window.openGroupFeed = function(groupName) {
+      activeGroupName = groupName || "재난관리국";
+      if (groupTitleText) groupTitleText.innerText = activeGroupName;
       if (currentDateBadge) currentDateBadge.innerText = selectedDate.replace('2026.', '');
 
       if (logView) logView.classList.add('hidden');
@@ -770,12 +735,8 @@
       if (groupFeedView) groupFeedView.classList.remove('hidden');
 
       renderGroupFeed();
-      if (activeGroupName !== "채여니랑") {
-        startCommentRotation();
-      } else {
-        if (commentRotationInterval) clearInterval(commentRotationInterval);
-      }
-    }
+      startCommentRotation();
+    };
 
     function closeGroupFeed() {
       if (commentRotationInterval) clearInterval(commentRotationInterval);
@@ -788,11 +749,8 @@
     if (groupBackBtn) groupBackBtn.addEventListener('click', closeGroupFeed);
 
     function getSlotComment(slotObj) {
-      if (!slotObj || !slotObj.comments || slotObj.comments.length === 0) {
-        return "";
-      }
-      const pool = slotObj.comments;
-      return pool[Math.floor(Math.random() * pool.length)];
+      if (!slotObj || !slotObj.comments || slotObj.comments.length === 0) return "";
+      return slotObj.comments[0];
     }
 
     function renderGroupFeed() {
@@ -801,7 +759,6 @@
 
       const groupData = GROUP_FEED_DATABASE[activeGroupName] || {};
       const slots = groupData[selectedDate] || createDateSlots("09:00", "13:00", "18:00");
-      const isChaeyeonGroup = (activeGroupName === "채여니랑");
 
       for (let i = 0; i < 3; i++) {
         const item = slots[i] || { id: `slot-${i}`, time: "12:00", caption: null, image: null, comments: [] };
@@ -812,73 +769,52 @@
         const currentReaction = slotReactionsState[reactionKey] || { selected: "☺", count: 0 };
 
         if (item.image) {
-          // FILLED SLOT
-          let bottomContentHTML = "";
+          const hasComments = item.comments && item.comments.length > 0;
+          const currentComment = hasComments ? getSlotComment(item) : "";
 
-          // '채여니랑' 그룹인 경우: 댓글 및 리액션 등 모든 상호작용 완전 제거
-          if (isChaeyeonGroup) {
-            bottomContentHTML = `
-              <div class="relative z-20 flex items-center justify-end w-full">
-                <span class="text-[10px] text-white/80 font-medium px-2.5 py-0.5 rounded-full bg-black/40 backdrop-blur-sm">
-                  아카이브 🔒
-                </span>
-              </div>
-            `;
-          } else {
-            // 일반 그룹 (재난관리국, 제2 팀): 댓글이 있을 때만 말풍선 표시
-            const hasComments = item.comments && item.comments.length > 0;
-            const currentComment = hasComments ? getSlotComment(item) : "";
-
-            bottomContentHTML = `
-              <div class="relative z-20 flex items-end justify-between gap-2 w-full">
-                <!-- Rotating Comment Speech Bubble -->
-                <div class="comment-bubble-container flex-1 min-w-0 pr-1">
-                  <div class="slot-comment-bubble comment-bubble-anim inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/95 text-slate-900 shadow-md backdrop-blur-md max-w-full ${hasComments ? '' : 'hidden'}">
-                    <div class="w-4 h-4 rounded-full overflow-hidden shrink-0 ring-1 ring-slate-200">
-                      <img src="./images/xoxo.png" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&auto=format&fit=crop&q=80';" class="w-full h-full object-cover">
-                    </div>
-                    <span class="slot-comment-text text-[11px] font-semibold truncate leading-tight" data-slot="${item.id}">
-                      ${currentComment}
-                    </span>
+          const bottomContentHTML = `
+            <div class="relative z-20 flex items-end justify-between gap-2 w-full">
+              <div class="comment-bubble-container flex-1 min-w-0 pr-1">
+                <div class="slot-comment-bubble comment-bubble-anim inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/95 text-slate-900 shadow-md backdrop-blur-md max-w-full ${hasComments ? '' : 'hidden'}">
+                  <div class="w-4 h-4 rounded-full overflow-hidden shrink-0 ring-1 ring-slate-200">
+                    <img src="./images/xoxo.png" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&auto=format&fit=crop&q=80';" class="w-full h-full object-cover">
                   </div>
-                </div>
-
-                <!-- Action Buttons: [표정 리액션] [말풍선(댓글작성)] -->
-                <div class="relative flex items-center space-x-1.5 shrink-0">
-                  <!-- Floating Reaction Picker Pill (표정 4종) -->
-                  <div id="reactionPicker-${item.id}" class="reaction-picker-popover hidden absolute bottom-10 right-8 z-30 bg-slate-900/90 backdrop-blur-md text-white px-2 py-1.5 rounded-full shadow-xl flex items-center space-x-2.5 text-base reaction-popup-anim border border-white/20">
-                    <button class="emoji-opt hover:scale-125 transition active:scale-95" data-emoji="😊" title="좋아요">😊</button>
-                    <button class="emoji-opt hover:scale-125 transition active:scale-95" data-emoji="😢" title="슬퍼요">😢</button>
-                    <button class="emoji-opt hover:scale-125 transition active:scale-95" data-emoji="😆" title="웃겨요">😆</button>
-                    <button class="emoji-opt hover:scale-125 transition active:scale-95" data-emoji="😮" title="놀람">😮</button>
-                  </div>
-
-                  <!-- 1. Facial Expression Reaction Toggle Button -->
-                  <button class="reaction-trigger-btn px-2.5 h-7 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md flex items-center justify-center gap-1 text-white text-xs font-semibold shadow transition active:scale-90" 
-                          data-slot="${item.id}" 
-                          title="표정 반응">
-                    <span class="reaction-icon text-sm">${currentReaction.selected}</span>
-                    <span class="reaction-count text-[10px] text-white/90 font-mono">${currentReaction.count > 0 ? currentReaction.count : ''}</span>
-                  </button>
-
-                  <!-- 2. Speech Bubble Icon for Comments -->
-                  <button class="comment-trigger-btn w-7 h-7 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md flex items-center justify-center text-white hover:text-setlog-mint transition active:scale-90 shadow" 
-                          data-slot="${item.id}" 
-                          title="댓글 남기기">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-                    </svg>
-                  </button>
+                  <span class="slot-comment-text text-[11px] font-semibold truncate leading-tight" data-slot="${item.id}">
+                    ${currentComment}
+                  </span>
                 </div>
               </div>
-            `;
-          }
+
+              <div class="relative flex items-center space-x-1.5 shrink-0">
+                <div id="reactionPicker-${item.id}" class="reaction-picker-popover hidden absolute bottom-10 right-8 z-30 bg-slate-900/90 backdrop-blur-md text-white px-2 py-1.5 rounded-full shadow-xl flex items-center space-x-2.5 text-base reaction-popup-anim border border-white/20">
+                  <button class="emoji-opt hover:scale-125 transition active:scale-95" data-emoji="😊" title="좋아요">😊</button>
+                  <button class="emoji-opt hover:scale-125 transition active:scale-95" data-emoji="😢" title="슬퍼요">😢</button>
+                  <button class="emoji-opt hover:scale-125 transition active:scale-95" data-emoji="😆" title="웃겨요">😆</button>
+                  <button class="emoji-opt hover:scale-125 transition active:scale-95" data-emoji="😮" title="놀람">😮</button>
+                </div>
+
+                <button class="reaction-trigger-btn px-2.5 h-7 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md flex items-center justify-center gap-1 text-white text-xs font-semibold shadow transition active:scale-90" 
+                        data-slot="${item.id}" 
+                        title="표정 반응">
+                  <span class="reaction-icon text-sm">${currentReaction.selected}</span>
+                  <span class="reaction-count text-[10px] text-white/90 font-mono">${currentReaction.count > 0 ? currentReaction.count : ''}</span>
+                </button>
+
+                <button class="comment-trigger-btn w-7 h-7 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md flex items-center justify-center text-white hover:text-setlog-mint transition active:scale-90 shadow" 
+                        data-slot="${item.id}" 
+                        title="댓글 남기기">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          `;
 
           slotEl.innerHTML = `
             <img src="${item.image}" alt="Feed Photo" class="absolute inset-0 w-full h-full object-cover z-0 rounded-3xl">
             <div class="absolute inset-0 bg-gradient-to-b from-black/35 via-transparent to-black/55 z-0 pointer-events-none rounded-3xl"></div>
 
-            <!-- Top Left: Min Ji-heon Profile Avatar + Name -->
             <div class="relative z-10 flex items-center space-x-2">
               <div class="w-6 h-6 rounded-full bg-white ring-1.5 ring-white/80 overflow-hidden flex items-center justify-center shadow">
                 <img src="./images/m4.png" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&auto=format&fit=crop&q=80';" alt="민지헌" class="w-full h-full object-cover">
@@ -886,7 +822,6 @@
               <span class="text-xs font-bold text-white drop-shadow">민지헌</span>
             </div>
 
-            <!-- Center Time & Caption (Perfect Center Alignment) -->
             <div class="relative z-10 my-auto w-full text-center flex flex-col items-center justify-center px-4">
               <span class="text-base font-black tracking-wider text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] font-sans">
                 ${item.time}
@@ -896,11 +831,9 @@
               </p>
             </div>
 
-            <!-- Bottom Row -->
             ${bottomContentHTML}
           `;
         } else {
-          // EMPTY NOISE SLOT
           slotEl.classList.add('noise-bg');
           slotEl.appendChild(createNoiseCanvas());
 
@@ -930,24 +863,20 @@
         groupSlotsContainer.appendChild(slotEl);
       }
 
-      if (!isChaeyeonGroup) {
-        attachSlotEventListeners();
-      }
+      attachSlotEventListeners();
     }
 
     function attachSlotEventListeners() {
-      // 1. Comment button click -> Open modal sheet
       document.querySelectorAll('.comment-trigger-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+        btn.onclick = (e) => {
           e.stopPropagation();
           activeCommentSlotId = btn.getAttribute('data-slot');
           openCommentModal();
-        });
+        };
       });
 
-      // 2. Reaction trigger button click -> Toggle picker popover
       document.querySelectorAll('.reaction-trigger-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+        btn.onclick = (e) => {
           e.stopPropagation();
           const slotId = btn.getAttribute('data-slot');
           const picker = document.getElementById(`reactionPicker-${slotId}`);
@@ -959,12 +888,11 @@
           if (picker) {
             picker.classList.toggle('hidden');
           }
-        });
+        };
       });
 
-     // 3. Emoji selection inside picker
       document.querySelectorAll('.emoji-opt').forEach(emojiBtn => {
-        emojiBtn.addEventListener('click', async (e) => {
+        emojiBtn.onclick = async (e) => {
           e.stopPropagation();
           const selectedEmoji = emojiBtn.getAttribute('data-emoji');
           const picker = emojiBtn.closest('.reaction-picker-popover');
@@ -989,7 +917,6 @@
           picker.classList.add('hidden');
           showToast(`반응을 남겼습니다: ${selectedEmoji}`);
 
-          // 구글 시트로 이모지 리액션 전송
           if (GOOGLE_SHEET_API_URL) {
             try {
               await fetch(GOOGLE_SHEET_API_URL, {
@@ -1010,15 +937,14 @@
               console.debug('Reaction offline logged');
             }
           }
-        });
+        };
       });
 
-      document.addEventListener('click', () => {
+      document.onclick = () => {
         document.querySelectorAll('.reaction-picker-popover').forEach(p => p.classList.add('hidden'));
-      });
+      };
     }
 
-   // 각 슬롯별 댓글 순차 무한 순환
     function startCommentRotation() {
       if (commentRotationInterval) {
         clearInterval(commentRotationInterval);
@@ -1048,7 +974,7 @@
             }
           }
         });
-      }, 3000); // 3초마다 순환 (원하는 초로 숫자 변경 가능)
+      }, 3000);
     }
 
     function openCommentModal() {
@@ -1065,27 +991,24 @@
       commentModal.classList.add('hidden');
     }
 
-    if (closeCommentModalBtn) closeCommentModalBtn.addEventListener('click', closeCommentModal);
+    if (closeCommentModalBtn) closeCommentModalBtn.onclick = closeCommentModal;
 
     if (submitCommentBtn) {
-      submitCommentBtn.addEventListener('click', async () => {
+      submitCommentBtn.onclick = async () => {
         const text = commentInputText ? commentInputText.value.trim() : '';
         if (!text) {
           showToast('댓글 내용을 입력해주세요.');
           return;
         }
 
-        // 무조건 '익명' 처리 (말풍선에는 작성자 표기 없이 깔끔하게 내용만 표시)
         const author = '익명';
-        const displayText = text;
-
         const groupData = GROUP_FEED_DATABASE[activeGroupName] || {};
         const slots = groupData[selectedDate] || [];
         const targetSlot = slots.find(s => s.id === activeCommentSlotId);
         
         if (targetSlot) {
           if (!targetSlot.comments) targetSlot.comments = [];
-          targetSlot.comments.unshift(displayText);
+          targetSlot.comments.unshift(text);
 
           const activeBubble = document.querySelector(`.slot-comment-text[data-slot="${activeCommentSlotId}"]`);
           if (activeBubble) {
@@ -1096,7 +1019,7 @@
               void parent.offsetWidth;
               parent.classList.add('comment-bubble-anim');
             }
-            activeBubble.innerText = displayText;
+            activeBubble.innerText = text;
           }
         }
 
@@ -1108,7 +1031,6 @@
             await fetch(GOOGLE_SHEET_API_URL, {
               method: 'POST',
               mode: 'no-cors',
-              headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 action: "comment",
                 group: activeGroupName,
@@ -1123,7 +1045,7 @@
             console.error('Google Sheet comment failed:', err);
           }
         }
-      });
+      };
     }
 
     function renderCalendarDates() {
@@ -1146,16 +1068,14 @@
           <span class="text-sm font-extrabold font-mono">${dayLabel}</span>
         `;
 
-        btn.addEventListener('click', () => {
+        btn.onclick = () => {
           selectedDate = date;
           if (currentDateBadge) currentDateBadge.innerText = dayLabel;
           closeCalendarModal();
           showToast(`${dayLabel} 로그로 이동했습니다.`);
           renderGroupFeed();
-          if (activeGroupName !== "채여니랑") {
-            startCommentRotation();
-          }
-        });
+          startCommentRotation();
+        };
 
         calendarDatesGrid.appendChild(btn);
       });
@@ -1172,9 +1092,8 @@
       calendarModal.classList.add('hidden');
     }
 
-    if (groupCalendarBtn) groupCalendarBtn.addEventListener('click', openCalendarModal);
-    if (closeCalendarModalBtn) closeCalendarModalBtn.addEventListener('click', closeCalendarModal);
-
+    if (groupCalendarBtn) groupCalendarBtn.onclick = openCalendarModal;
+    if (closeCalendarModalBtn) closeCalendarModalBtn.onclick = closeCalendarModal;
 
     // Vlog Card Render
     function renderVlogCard(index) {
@@ -1211,35 +1130,35 @@
       if (logView) logView.classList.remove('hidden');
     }
 
-    if (vlogBannerCard) vlogBannerCard.addEventListener('click', openVlogView);
-    if (vlogBackBtn) vlogBackBtn.addEventListener('click', closeVlogView);
+    if (vlogBannerCard) vlogBannerCard.onclick = openVlogView;
+    if (vlogBackBtn) vlogBackBtn.onclick = closeVlogView;
 
     if (prevVlogBtn) {
-      prevVlogBtn.addEventListener('click', (e) => {
+      prevVlogBtn.onclick = (e) => {
         e.stopPropagation();
         if (currentVlogIndex > 0) {
           renderVlogCard(currentVlogIndex - 1);
         } else {
           showToast('가장 첫 번째 기록입니다.');
         }
-      });
+      };
     }
 
     if (nextVlogBtn) {
-      nextVlogBtn.addEventListener('click', (e) => {
+      nextVlogBtn.onclick = (e) => {
         e.stopPropagation();
         if (currentVlogIndex < VLOG_ENTRIES.length - 1) {
           renderVlogCard(currentVlogIndex + 1);
         } else {
           showToast('마지막 기록입니다.');
         }
-      });
+      };
     }
 
     // Shutter button flash
     const shutterBtn = document.getElementById('shutterBtn');
     if (shutterBtn && cameraView) {
-      shutterBtn.addEventListener('click', () => {
+      shutterBtn.onclick = () => {
         const flash = document.createElement('div');
         flash.className = 'absolute inset-0 bg-white z-50 pointer-events-none transition-opacity duration-300';
         cameraView.appendChild(flash);
@@ -1248,10 +1167,9 @@
           setTimeout(() => flash.remove(), 300);
         }, 50);
         showToast('찰칵! 스냅이 캡처되었습니다.');
-      });
+      };
     }
 
-    // 초기 구글 시트 데이터 불러오기 실행
     window.addEventListener('DOMContentLoaded', () => {
       fetchFromGoogleSheet();
     });
