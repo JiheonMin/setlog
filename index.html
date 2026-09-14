@@ -976,11 +976,18 @@
 
     if (closeCommentModalBtn) closeCommentModalBtn.onclick = closeCommentModal;
 
-    if (submitCommentBtn) {
+if (submitCommentBtn) {
       submitCommentBtn.onclick = async () => {
         const text = commentInputText ? commentInputText.value.trim() : '';
         if (!text) {
           showToast('댓글 내용을 입력해주세요.');
+          return;
+        }
+
+        // 🔒 관리자 비밀번호 검증 (19950111)
+        const enteredPw = prompt("관리자 비밀번호를 입력해주세요:");
+        if (enteredPw !== "19950111") {
+          showToast("비밀번호가 일치하지 않습니다.");
           return;
         }
 
@@ -1006,7 +1013,7 @@
           }
         }
 
-        showToast('익명으로 댓글이 등록되었습니다!');
+        showToast('댓글이 정상 등록되었습니다.');
         closeCommentModal();
 
         if (GOOGLE_SHEET_API_URL) {
