@@ -738,7 +738,8 @@
     window.openGroupFeed = function(groupName) {
       activeGroupName = groupName || "재난관리국";
       if (groupTitleText) groupTitleText.innerText = activeGroupName;
-      if (currentDateBadge) currentDateBadge.innerText = selectedDate.replace('2026.', '');
+      const initialParts = selectedDate.split('.');
+      if (currentDateBadge) currentDateBadge.innerText = `${parseInt(initialParts[1], 10)}. ${parseInt(initialParts[2], 10)}.`;
 
       if (logView) logView.classList.add('hidden');
       if (mainAppHeader) mainAppHeader.classList.add('hidden');
@@ -1054,8 +1055,9 @@ if (submitCommentBtn) {
       if (!calendarDatesGrid) return;
       calendarDatesGrid.innerHTML = "";
 
-      DATE_LIST.forEach(date => {
-        const dayLabel = date.replace('2026.', '');
+DATE_LIST.forEach(date => {
+        const parts = date.split('.');
+        const dayLabel = `${parseInt(parts[1], 10)}. ${parseInt(parts[2], 10)}.`;
         const isCurrent = (date === selectedDate);
         
         const btn = document.createElement('button');
