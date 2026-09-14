@@ -643,7 +643,7 @@
                 if (!slotReactionsState[key]) {
                   slotReactionsState[key] = { '😊': 0, '😢': 0, '😆': 0, '😮': 0 };
                 }
-                const emoji = content || '😊';
+                const emoji = item.emoji || content || '😊';
                 if (slotReactionsState[key][emoji] !== undefined) {
                   slotReactionsState[key][emoji] += 1;
                 } else {
