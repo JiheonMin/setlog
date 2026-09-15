@@ -1034,9 +1034,16 @@ if (submitCommentBtn) {
           return;
         }
 
-// 🔒 
+// 🔒 한글 입력 에러 방지 안전 검증
         const enteredPw = prompt("셋로그 개설한 건 비밀이야") || "";
-        if (btoa(enteredPw) !== "OTUwMTEx") {
+        let encodedCheck = "";
+        try {
+          encodedCheck = btoa(enteredPw);
+        } catch (e) {
+          encodedCheck = "invalid_korean"; // 한글을 치면 에러가 나므로 틀린 값으로 처리
+        }
+
+        if (encodedCheck !== "OTUwMTEx") {
           showToast("공무원은 품위 유지 의무 때문에 셋로그 금지야~");
           return;
         }
